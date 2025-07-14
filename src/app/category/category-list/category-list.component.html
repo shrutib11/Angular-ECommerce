@@ -1,1 +1,28 @@
-<p>category-list works!</p>
+<div class="header mt-4">
+  <h1>Product Categories</h1>
+  <p>Explore our diverse range of product categories or manage them as an admin</p>
+  <div class="buttons">
+    <button class="btn btn-dark">
+      <i class="bi bi-box-seam"></i> Browse All Products
+    </button>
+    <button class="btn btn-outline-secondary">
+      <i class="bi bi-plus"></i> Add Category
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 300px;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div *ngIf="!isLoading">
+  <div class="card-container">
+    <app-category-card
+      *ngFor="let category of categories"
+      [category]="category">
+    </app-category-card>
+  </div>
+</div>
+
