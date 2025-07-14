@@ -1,0 +1,9 @@
+<div class="card">
+  <img [src]="getCategoryImageUrl(category.categoryImage)" alt="{{ category.name }}" />
+  <div class="card-body">
+    <h5>{{ category.name }}</h5>
+    <p>{{ category.description }}</p>
+    <!-- <span class="badge">{{ category.productCount }} products</span> -->
+    <button class="view-btn">View Products <i class="bi bi-arrow-right"></i></button>
+  </div>
+</div>
