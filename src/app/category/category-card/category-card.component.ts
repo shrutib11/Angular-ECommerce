@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-category-card',
@@ -6,11 +7,13 @@ import { Component, Input } from '@angular/core';
   templateUrl: './category-card.component.html',
   styleUrl: './category-card.component.css'
 })
-export class CategoryCardComponent {
+export class CategoryCardComponent implements OnInit{
   @Input() category: any;
+
+  ngOnInit(): void {}
 
   getCategoryImageUrl(path: string): string {
     const fileName = path.split('/').pop();
-    return `http://localhost:7000/category-uploads/${fileName}`;
+    return `${environment.baseUrl}/category-uploads/${fileName}`;
   }
 }

@@ -5,7 +5,7 @@
     <button class="btn btn-dark">
       <i class="bi bi-box-seam"></i> Browse All Products
     </button>
-    <button class="btn btn-outline-secondary">
+    <button class="btn btn-outline-secondary" (click)="openAddModal()">
       <i class="bi bi-plus"></i> Add Category
     </button>
   </div>
@@ -19,10 +19,14 @@
 
 <div *ngIf="!isLoading">
   <div class="card-container">
-    <app-category-card
-      *ngFor="let category of categories"
-      [category]="category">
+    <app-category-card *ngFor="let category of categories" [category]="category">
     </app-category-card>
   </div>
 </div>
 
+<app-category-add-edit
+[showModal]="showAddModal"
+(closeModal)="closeAddModal()"
+(categoryAdded)="onCategoryAdded($event)"
+>
+</app-category-add-edit>
