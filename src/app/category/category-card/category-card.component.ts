@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment'; // Adjust the path as necessary`
 
 @Component({
   selector: 'app-category-card',
