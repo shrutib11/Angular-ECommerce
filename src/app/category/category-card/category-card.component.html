@@ -1,9 +1,24 @@
-<div class="card">
-  <img [src]="getCategoryImageUrl(category.categoryImage)" alt="{{ category.name }}" />
+<div class="card category-card" (mouseenter)="hover = true" (mouseleave)="hover = false">
+
+  <div class="image-container">
+    <img [src]="getCategoryImageUrl(category.categoryImage)" alt="{{ category.name }}" />
+
+    <div class="action-icons" *ngIf="hover">
+      <button class="btn btn-light btn-sm me-1" (click)="onEditClick()" title="Edit">
+        <i class="bi bi-pencil"></i>
+      </button>
+      <button class="btn btn-danger btn-sm" (click)="onDeleteClick()" title="Delete">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="card-body">
-    <h5>{{ category.name }}</h5>
-    <p>{{ category.description }}</p>
-    <!-- <span class="badge">{{ category.productCount }} products</span> -->
-    <button class="view-btn">View Products <i class="bi bi-arrow-right"></i></button>
+    <h5 class="card-title text-primary fw-semibold">{{ category.name }}</h5>
+    <p class="card-text text-muted small">{{ category.description }}</p>
+    <!-- <span class="badge bg-light text-muted mb-2">{{ category.productCount }} products</span> -->
+    <button class="btn btn-dark w-100">
+      View Products <i class="bi bi-arrow-right"></i>
+    </button>
   </div>
 </div>
