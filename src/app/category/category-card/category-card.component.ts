@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
+import { Category } from '../../models/category.model';
 
 @Component({
   selector: 'app-category-card',
@@ -11,7 +12,7 @@ import { CommonModule } from '@angular/common';
 export class CategoryCardComponent implements OnInit {
   @Input() category: any;
   hover = false;
-  @Output() editClicked = new EventEmitter<string>();
+  @Output() editClicked = new EventEmitter<Category>();
   @Output() deleteClicked = new EventEmitter<{ id: string, name: string }>();
 
   ngOnInit(): void { }
@@ -22,7 +23,7 @@ export class CategoryCardComponent implements OnInit {
   }
 
   onEditClick() {
-    this.editClicked.emit(this.category.id);
+    this.editClicked.emit(this.category);
   }
 
   onDeleteClick() {

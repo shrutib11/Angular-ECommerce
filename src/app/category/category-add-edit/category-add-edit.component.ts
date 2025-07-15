@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CategoryService } from '../../services/category.service';
 import { CommonModule } from '@angular/common';
 import { Category } from '../../models/category.model';
-import Swal from 'sweetalert2';
 import { environment } from '../../../environments/environment';
 import { AlertService } from '../../shared/alert/alert.service';
 
@@ -15,7 +14,7 @@ import { AlertService } from '../../shared/alert/alert.service';
 })
 export class CategoryAddEditComponent implements OnInit, OnChanges {
   @Input() showModal: boolean = false;
-  @Input() categoryId: string | null = null;
+  @Input() category: Category | null = null;
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() categoryAdded = new EventEmitter<Category>();
@@ -28,35 +27,11 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
   imagePreview: string | null = null;
   submitted: boolean = false;
 
-  ngOnInit(): void {
-    if (this.categoryId) {
-      this.loadCategoryForEdit(this.categoryId);
-    }
-  }
+  ngOnInit(): void {}
 
   getCategoryImageUrl(path: string): string {
     const fileName = path.split('/').pop();
     return `${environment.baseUrl}/category-uploads/${fileName}`;
-  }
-
-  loadCategoryForEdit(id: string) {
-    this.categoryService.getCategoryById(id).subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          const category = response.result;
-          this.categoryForm.patchValue({
-            name: category.name,
-            description: category.description
-          });
-          this.imagePreview = this.getCategoryImageUrl(category.categoryImage);
-        } else {
-          this.alertService.showError(response.errorMessage || 'Failed to load category data');
-        }
-      },
-      error: () => {
-        this.alertService.showError('Server error while fetching category data');
-      }
-    });
   }
 
   constructor(
@@ -70,15 +45,19 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.showModal && this.categoryId) {
-      this.loadCategoryForEdit(this.categoryId);
+  ngOnChanges(): void {
+    if (this.showModal && this.category) {
+      this.categoryForm.patchValue({
+        name: this.category.name,
+        description: this.category.description
+      });
+      this.imagePreview = this.getCategoryImageUrl(this.category.categoryImage);
     }
 
     // close the form and reopen it then form should be reset
-    if (changes['showModal'] && this.showModal && !this.categoryId) {
-      this.resetForm();
-    }
+    // if (changes['showModal'] && this.showModal && !this.category) {
+    //   this.resetForm();
+    // }
   }
 
   onFileSelected(event: any) {
@@ -96,7 +75,6 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
         this.fileInputRef.nativeElement.value = '';
         return;
       }
-
       if (file.size > maxSize) {
         this.alertService.showError("Image size must be less than or equal to 2MB.");
         this.selectedFile = null;
@@ -125,8 +103,8 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
     formData.append('description', this.categoryForm.get('description')?.value);
     formData.append('categoryFile', this.selectedFile!);
 
-    if (this.categoryId) {
-      formData.append('id', this.categoryId);
+    if (this.category) {
+      formData.append('id', this.category.id.toString());
       this.categoryService.updateCategory(formData).subscribe({
         next: (res) => this.handleSuccess('Category updated successfully!', res.result),
         error: () => this.alertService.showError('Failed to update')

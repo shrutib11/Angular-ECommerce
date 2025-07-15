@@ -3,7 +3,6 @@ import { CategoryCardComponent } from '../category-card/category-card.component'
 import { CommonModule } from '@angular/common';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
-import Swal from 'sweetalert2';
 import { CategoryAddEditComponent } from '../category-add-edit/category-add-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
@@ -19,7 +18,7 @@ export class CategoryListComponent implements OnInit {
   isLoading = true;
   showAddModal: boolean = false;
   categories: Category[] = [];
-  editCategoryId: string | null = null;
+  editCategory: Category | null = null;
 
   //Delete Modal Properties
   showDeleteModal = false;
@@ -48,11 +47,11 @@ export class CategoryListComponent implements OnInit {
 
   openAddModal(): void {
     this.showAddModal = true;
-    this.editCategoryId = null;
+    this.editCategory = null;
   }
 
-  onEditCategory(id: string): void {
-    this.editCategoryId = id;
+  onEditCategory(category: Category): void {
+    this.editCategory = category;
     this.showAddModal = true;
   }
 
@@ -68,11 +67,10 @@ export class CategoryListComponent implements OnInit {
   onCategoryAdded(newCategory : Category): void {
     const index = this.categories.findIndex(c => c.id === newCategory.id);
 
-    if (index !== -1) {
+    if (index !== -1)
       this.categories[index] = newCategory;
-    } else {
+    else
       this.categories.push(newCategory);
-    }
   }
 
   confirmDelete(): void {
@@ -86,13 +84,13 @@ export class CategoryListComponent implements OnInit {
           this.closeDeleteModal();
 
           this.alertService.showSuccess("Category Deleted Successfully");
-        } else {
+        } else
           this.alertService.showError(response.errorMessage ?? "Failed to delete category");
-        }
+
         this.isDeleting = false;
       },
       error: (error) => {
-        this.alertService.showError(error);
+        this.alertService.showError(error.statusText);
         this.isDeleting = false;
       }
     });
