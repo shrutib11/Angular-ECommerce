@@ -5,7 +5,7 @@
       <div class="modal-header">
         <h5 class="modal-title" id="addCategoryModalLabel">
           <i class="bi bi-plus-circle me-2"></i>
-          {{ categoryId ? 'Update Category' : 'Add Category' }}
+          {{ category ? 'Update Category' : 'Add Category' }}
         </h5>
         <button type="button" class="btn-close" (click)="onClose()" aria-label="Close"></button>
       </div>
@@ -13,7 +13,7 @@
       <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
           <div class="mb-3">
-            <label for="categoryName" class="form-label">Category Name *</label>
+            <label for="categoryName" class="form-label">Category Name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="categoryName" formControlName="name"
               placeholder="Enter category name" [class.is-invalid]="name?.invalid && name?.touched">
             <div class="invalid-feedback" *ngIf="name?.invalid && name?.touched">
@@ -23,7 +23,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="categoryDescription" class="form-label">Description *</label>
+            <label for="categoryDescription" class="form-label">Description <span class="text-danger">*</span></label>
             <textarea class="form-control" id="categoryDescription" formControlName="description" rows="3"
               placeholder="Enter category description"
               [class.is-invalid]="description?.invalid && description?.touched"></textarea>
@@ -33,7 +33,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="categoryImage" class="form-label">Category Image *</label>
+            <label for="categoryImage" class="form-label">Category Image <span class="text-danger">*</span></label>
             <input #fileInput type="file" class="form-control" id="categoryImage" accept="image/*"
               (change)="onFileSelected($event)" [class.is-invalid]="!selectedFile && submitted">
             <div class="invalid-feedback" *ngIf="!selectedFile && submitted">
@@ -58,7 +58,7 @@
             [disabled]="categoryForm.invalid || (!selectedFile && !imagePreview) || isSubmitting">
             <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status"></span>
             <i class="bi bi-plus-circle me-1" *ngIf="!isSubmitting"></i>
-            {{ isSubmitting ? 'Adding...' : (categoryId ? 'Update Category' : 'Add Category') }}
+            {{ isSubmitting ? 'Adding...' : (category ? 'Update Category' : 'Add Category') }}
           </button>
 
         </div>
