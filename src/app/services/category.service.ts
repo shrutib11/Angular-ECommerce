@@ -9,15 +9,27 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class CategoryService {
-  private baseUrl = environment.apiBaseUrl;
+  private baseUrl = environment.categoryBaseUrl;
 
   constructor(private http: HttpClient) { }
 
-  getAllCategories() : Observable<ApiResponse<Category[]>> {
+  getAllCategories(): Observable<ApiResponse<Category[]>> {
     return this.http.get<ApiResponse<Category[]>>(`${this.baseUrl}/GetAll`)
   }
 
-  addCategory(categoryData : FormData) : Observable<ApiResponse<Category>> {
-    return this.http.post<ApiResponse<Category>> (`${this.baseUrl}/Add`, categoryData)
+  getCategoryById(categoryId: string): Observable<ApiResponse<Category>> {
+    return this.http.get<ApiResponse<Category>>(`${this.baseUrl}/${categoryId}`);
+  }
+
+  addCategory(categoryData: FormData): Observable<ApiResponse<Category>> {
+    return this.http.post<ApiResponse<Category>>(`${this.baseUrl}/Add`, categoryData)
+  }
+
+  updateCategory(categoryData: FormData): Observable<ApiResponse<Category>> {
+    return this.http.put<ApiResponse<Category>>(`${this.baseUrl}/Update`, categoryData)
+  }
+
+  deleteCategory(categoryId: string): Observable<ApiResponse<any>> {
+    return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${categoryId}`, {});
   }
 }
