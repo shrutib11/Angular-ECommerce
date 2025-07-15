@@ -13,4 +13,7 @@ export class UserService {
   getAllUsers() : Observable<ApiResponse<UserModel[]>> {
     return this.http.get<ApiResponse<UserModel[]>>(`${this.baseUrl}/GetAllUsers`);
   }
+  upsert(userData : FormData ): Observable<ApiResponse<UserModel>> {
+    return this.http.put<ApiResponse<UserModel>>(`${this.baseUrl}/update`, userData);
+  }
 }

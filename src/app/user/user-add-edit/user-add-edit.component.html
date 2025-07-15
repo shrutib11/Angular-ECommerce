@@ -1,1 +1,127 @@
-<p>user-add-edit works!</p>
+<!-- add-category-modal.component.html -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'"
+     tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCategoryModalLabel">
+          <i class="bi bi-plus-circle me-2"></i>
+          Edit user {{ userForm.invalid}}
+        </h5>
+        <button type="button" class="btn-close" (click)="onClose()" aria-label="Close"></button>
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+        <div class="d-flex align-items-center justify-content-center mt-3 image-container">
+          <!-- File Input Trigger (hidden input inside label) -->
+          <label class="rounded-circle d-flex align-items-center justify-content-center profileImageEditIcon"
+                 style="width: 35px; height: 35px; cursor: pointer;">
+            <i class="bi bi-camera text-white"></i>
+            <input type="file" accept="image/*" c
+                   (change)="onFileSelected($event)"
+                   style="display: none;">
+          </label>
+
+          <img
+              *ngIf="imagePreview || user.profileImage"
+              [src]="imagePreview ? imagePreview : getUserImageUrl(user.profileImage)"
+              class="rounded-circle userImage"
+              width="120"
+              height="120"
+              alt="User Image"
+              style="object-fit: cover;"
+            />
+            <div
+            *ngIf="!user.profileImage"
+            class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center userImage "
+            style="width: 120px; height: 120px; font-size: 1.4rem; font-weight: 600;"
+          > {{ getInitials(user.firstName, user.lastName) }}</div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="Firstname" class="form-label">First Name *</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firstName"
+              id="firstName"
+              placeholder="Enter First Name">
+            <div class="invalid-feedback" >
+              <small *ngIf="f['firstName'].touched && f['firstName'].errors?.['.required']">Please provide First Name</small>
+              <small *ngIf="f['firstName'].touched && f['firstName'].errors?.['maxlength']">First Name should be maximum 50 characters long</small>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name *</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastName"
+              id="lastName"
+              placeholder="Enter last Name">
+            <div class="invalid-feedback" >
+              <small *ngIf="f['lastName'].touched && f['lastName'].errors?.['.required']">Please provide Last Name</small>
+              <small *ngIf="f['lastName'].touched && f['lastName'].errors?.['maxlength']">Last Name should be maximum 50 characters long</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email *</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="email"
+              id="email"
+              placeholder="Enter your email" [disabled]="isEditing">
+          </div>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number *</label>
+            <input
+            type="text"
+              class="form-control"
+              id="phoneNumber"
+              rows="3"
+              formControlName="phoneNumber"
+              placeholder="Enter your phone number"/>
+            <div class="invalid-feedback">
+              <small *ngIf="f['phoneNumber'].touched && f['phoneNumber']?.errors?.['required']">Please provide phone number</small>
+              <small *ngIf="f['phoneNumber'].touched && f['phoneNumber']?.errors?.['pattern']">Please provide a valid Phone Number</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">pincode *</label>
+            <input
+            type="text"
+              class="form-control"
+              id="pinCode"
+              rows="3"
+              formControlName="pinCode"
+              placeholder="Enter pinCode"/>
+            <div class="invalid-feedback">
+              <small *ngIf="f['pinCode'].touched &&  f['pinCode']?.errors?.['required']">Please provide pincode</small>
+              <small *ngIf="f['pinCode'].touched && f['pinCode']?.errors?.['pattern']">Please provide a valid pincode</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="isSubmitting">
+            <i class="bi bi-x-circle me-1"></i>Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="userForm.invalid">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status"></span>
+            <i class="bi bi-plus-circle me-1" *ngIf="!isSubmitting"></i>
+            {{ isSubmitting ? 'Adding...' : 'Add Category' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal backdrop -->
+<div class="modal-backdrop fade" [class.show]="showModal" *ngIf="showModal"></div>

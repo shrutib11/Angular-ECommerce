@@ -6,7 +6,8 @@ export interface UserModel {
   password: string;
   phoneNumber: string;
   address: string;
-  pincode: string;
-  userImage: string;
+  pinCode: string;
+  userImage: any;
   profileImage: string;
+
 }
