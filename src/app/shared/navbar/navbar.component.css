@@ -1,0 +1,36 @@
+.search-container {
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-box {
+  width: 100%;
+  transition: box-shadow 0.2s;
+}
+
+.search-box input::placeholder {
+  color: #a1a1a1;
+  font-size: 14px;
+}
+
+.navbar .nav-link {
+  padding: 5px 10px;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #667eea !important;  
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+}
+
+.nav-link.active {
+  color: #667eea !important;
+  position: relative;
+  border-bottom: 2px solid #667eea;
+  transition: all 0.3s ease;
+}

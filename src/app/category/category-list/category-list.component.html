@@ -19,14 +19,27 @@
 
 <div *ngIf="!isLoading">
   <div class="card-container">
-    <app-category-card *ngFor="let category of categories" [category]="category">
+    <app-category-card *ngFor="let category of categories" [category]="category" (editClicked)="onEditCategory($event)"
+ (deleteClicked)="onDeleteCategory($event)">
     </app-category-card>
   </div>
 </div>
 
 <app-category-add-edit
-[showModal]="showAddModal"
-(closeModal)="closeAddModal()"
-(categoryAdded)="onCategoryAdded($event)"
+  [showModal]="showAddModal"
+  [category]="editCategory"
+  (closeModal)="closeAddModal()"
+  (categoryAdded)="onCategoryAdded($event)"
 >
 </app-category-add-edit>
+
+<app-delete-confirmation
+  [isVisible]="showDeleteModal"
+  [title]="'Delete Category'"
+  [message]="'Are you sure you want to delete this category? All associated products will also be affected.'"
+  [itemName]="categoryToDelete?.name || ''"
+  [isLoading]="isDeleting"
+  [deleteButtonText]="'Delete Category'"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()">
+</app-delete-confirmation>

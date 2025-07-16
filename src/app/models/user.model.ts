@@ -9,5 +9,4 @@ export interface UserModel {
   pinCode: string;
   userImage: any;
   profileImage: string;
-
 }

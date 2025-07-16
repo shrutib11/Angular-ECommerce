@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { UserCardComponent } from '../user-card/user-card.component';
 import { CommonModule } from '@angular/common';
 import { UserAddEditComponent } from "../user-add-edit/user-add-edit.component";
+import { AlertService } from '../../shared/alert/alert.service';
 
 @Component({
   selector: 'app-user-list',
@@ -16,24 +17,28 @@ export class UserListComponent {
 users: UserModel[] = [];
 selectedUser!: UserModel;
 @Input() showModal: boolean = false;
-  constructor(private userService: UserService) { }
+@Input() isUpsertCompleted: boolean = false;
+  constructor(private userService: UserService,private alertService : AlertService) { }
 
     showEditModal(user: UserModel): void {
       this.selectedUser = user;
+
       this.showModal = true;
     }
+    onUpsertCompleted(upsertCompleted : boolean){
+      this.isUpsertCompleted = true;
+      this.showModal = false;
+      this.ngOnInit();
+    }
+
   ngOnInit(): void {
     this.userService.getAllUsers().subscribe({
       next: (response) => {
         this.users = response.result || [];
+
       },
       error: (error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error.statusText,
-          confirmButtonColor: '#d33'
-        });
+       this.alertService.showError('Failed to load users');
       }
     })
   }

@@ -14,6 +14,13 @@ export class UserService {
     return this.http.get<ApiResponse<UserModel[]>>(`${this.baseUrl}/GetAllUsers`);
   }
   upsert(userData : FormData ): Observable<ApiResponse<UserModel>> {
-    return this.http.put<ApiResponse<UserModel>>(`${this.baseUrl}/update`, userData);
+    console.log(userData.get('Id'))
+    if(userData.get('Id') == '0' || userData.get('Id') === null || userData.get('Id') === undefined) {
+      return this.http.post<ApiResponse<UserModel>>(`${this.baseUrl}/register`, userData);
+    }
+    else{
+      return this.http.put<ApiResponse<UserModel>>(`${this.baseUrl}/update`, userData);
+    }
   }
+
 }

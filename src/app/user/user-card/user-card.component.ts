@@ -29,7 +29,6 @@ export class UserCardComponent {
     }
 
     EditUser(user: UserModel): void {
-      console.log(user);
       this.showUserEditModal.emit(user);
     }
 }
