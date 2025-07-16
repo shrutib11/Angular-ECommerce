@@ -18,9 +18,9 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <div class="card-container">
+  <div class="card-container row">
     <app-category-card *ngFor="let category of categories" [category]="category" (editClicked)="onEditCategory($event)"
- (deleteClicked)="onDeleteCategory($event)">
+ (deleteClicked)="onDeleteCategory($event)" class="col-4">
     </app-category-card>
   </div>
 </div>
