@@ -25,7 +25,7 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
   selectedFile: File | null = null;
   isSubmitting: boolean = false;
   imagePreview: string | null = null;
-  submitted: boolean = false;
+  // submitted: boolean = false;
 
   ngOnInit(): void {}
 
@@ -94,7 +94,7 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
   }
 
   onSubmit() {
-    this.submitted = true;
+    // this.submitted = true;
 
     this.isSubmitting = true;
 
@@ -135,7 +135,7 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
     this.selectedFile = null;
     this.imagePreview = null;
     this.isSubmitting = false;
-    this.submitted = false;
+    // this.submitted = false;
   }
 
   get name() { return this.categoryForm.get('name'); }

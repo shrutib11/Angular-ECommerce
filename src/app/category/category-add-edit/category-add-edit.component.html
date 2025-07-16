@@ -35,8 +35,8 @@
           <div class="mb-3">
             <label for="categoryImage" class="form-label">Category Image <span class="text-danger">*</span></label>
             <input #fileInput type="file" class="form-control" id="categoryImage" accept="image/*"
-              (change)="onFileSelected($event)" [class.is-invalid]="!selectedFile && submitted">
-            <div class="invalid-feedback" *ngIf="!selectedFile && submitted">
+              (change)="onFileSelected($event)" [class.is-invalid]="!selectedFile && isSubmitting">
+            <div class="invalid-feedback" *ngIf="!selectedFile && isSubmitting">
               <small>Please select an image for the category</small>
             </div>
           </div>

@@ -14,11 +14,23 @@
 }
 
 .navbar .nav-link {
-  font-size: 15px;
-  padding: 6px 0;
+  padding: 5px 10px;
   transition: color 0.2s;
 }
 
-.navbar .nav-link:hover {
-  color: #0d6efd;
+.nav-link:hover {
+  color: #667eea !important;  
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+}
+
+.nav-link.active {
+  color: #667eea !important;
+  position: relative;
+  border-bottom: 2px solid #667eea;
+  transition: all 0.3s ease;
 }
