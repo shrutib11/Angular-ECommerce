@@ -106,7 +106,9 @@ export class CategoryAddEditComponent implements OnInit, OnChanges {
     if (this.category) {
       formData.append('id', this.category.id.toString());
       this.categoryService.updateCategory(formData).subscribe({
-        next: (res) => this.handleSuccess('Category updated successfully!', res.result),
+        next: (res) => {this.handleSuccess('Category updated successfully!', res.result);
+          localStorage.setItem('category-' + this.category?.id, JSON.stringify(res.result));
+        },
         error: () => this.alertService.showError('Failed to update')
       });
     } else {

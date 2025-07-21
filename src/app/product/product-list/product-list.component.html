@@ -1,0 +1,79 @@
+<div class="header mt-4">
+
+  <div *ngIf="receivedCategory; else defaultHeader" class="d-flex justify-content-between align-items-start">
+
+    <div class="category-info">
+      <button class="btn btn-link p-0 mb-2"  routerLink="/categories">
+        <i class="bi bi-arrow-left"></i> Back to Categories
+      </button>
+      <h2 class="mb-2 pt-3">{{ receivedCategory.name }}</h2>
+      <p class="text-muted fs-5">{{ receivedCategory.description }}</p>
+      <p class="products-counter-accent mt-2">{{products.length}} Products available</p>
+      <button class="btn btn-add mt-4" (click)="openAddEditModal()">
+        <i class="bi bi-plus-lg"></i> Add Product
+      </button>
+    </div>
+
+
+    <div class="category-image text-end">
+      <img *ngIf="receivedCategory.categoryImage"
+           [src]="getCategoryImageUrl(receivedCategory.categoryImage)"
+           alt="{{ receivedCategory.name }}"
+           class="img-fluid rounded shadow" />
+    </div>
+
+  </div>
+
+  <!-- Default header if no category selected -->
+  <ng-template #defaultHeader>
+    <h1>Our Products</h1>
+    <p>Browse our collection or manage products as an admin.</p>
+
+    <div class="buttons">
+      <button class="btn btn-dark" routerLink="/categories">
+        <i class="bi bi-tags"></i> Browse Categories
+      </button>
+      <button class="btn btn-outline-secondary" (click)="openAddEditModal()">
+        <i class="bi bi-plus-lg"></i> Add Product
+      </button>
+    </div>
+  </ng-template>
+</div>
+
+
+<!-- Spinner while loading -->
+<div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 300px;">
+  <div class="spinner-border text-success" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Product grid when loaded -->
+<div *ngIf="!isLoading">
+  <div class="card-container row">
+    <app-product-card class="col-md-3 col-sm-6 mb-5"
+      *ngFor="let product of products"
+      [product]="product" (editClicked)="onEditProduct($event)" (deleteClicked)="onDeleteProduct($event)">
+    </app-product-card>
+  </div>
+</div>
+
+<!-- Product Add/Edit Modal -->
+<app-product-add-edit
+  [showModal]="showAddEditModal"
+  [product]="receivedProduct"
+  [catId]="receivedCategoryId"
+  (closeModal)="closeAddEditModal()"
+  (productAddEdit)="onProductAddEdit($event)">
+</app-product-add-edit>
+
+<app-delete-confirmation
+  [isVisible]="showDeleteModal"
+  [title]="'Delete Product'"
+  [message]="'Are you sure you want to delete this product?'"
+  [itemName]="productToDelete?.name || ''"
+  [isLoading]="isDeleting"
+  [deleteButtonText]="'Delete Product'"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()">
+</app-delete-confirmation>
