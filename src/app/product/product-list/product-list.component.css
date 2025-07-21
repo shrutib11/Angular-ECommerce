@@ -1,0 +1,152 @@
+.header {
+  background-color: #f8f9fa;
+  padding: 24px 10rem;
+  border-radius: 8px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .btn-link {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+}
+
+.header .btn-link:hover {
+  color: #495057;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header .btn-link i {
+  font-size: 16px;
+}
+
+.category-info h2 {
+  color: #212529;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.header .category-info p {
+  color: #6c757d;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 0;
+  text-align: start;
+}
+
+.category-image {
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+
+.category-image img {
+  width: auto;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header h1 {
+  color: #212529;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.header p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons .btn {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 20px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.buttons .btn-dark {
+  background-color: #212529;
+  border-color: #212529;
+  color: #ffffff;
+}
+
+.buttons .btn-dark:hover {
+  background-color: #1a1e21;
+  border-color: #1a1e21;
+  transform: translateY(-1px);
+}
+
+.buttons .btn-outline-secondary {
+  background-color: transparent;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.buttons .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.card-container {
+  padding: 0 10rem;
+  width: 100%;
+}
+
+.btn-add {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #ffffff;
+}
+
+.btn-add:hover {
+  background-color: #4a5055;
+  border-color: #545b62;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.products-counter-accent {
+  font-size: 13px;
+  color: #4a5568;
+  background-color: #eeeeee;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: block;
+  width: fit-content;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}

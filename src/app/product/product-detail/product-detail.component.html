@@ -1,0 +1,53 @@
+<div class="container">
+  <!-- Back Link -->
+  <div class="back-link mt-5">
+    <a  routerLink="/categories" class="text-decoration-none text-muted">
+      <i class="bi bi-arrow-left"></i> Back to {{ category?.name || 'Category' }}
+    </a>
+  </div>
+
+  <!-- Product Section -->
+  <div class="product-section row">
+    <div class="product-image-col col-md-6 col-lg-6">
+      <div class="image-wrapper">
+        <img [src]="getProductImageUrl(product.productImage)" [alt]="product.name" class="product-image">
+      </div>
+    </div>
+
+    <div class="product-info-col col-md-6 col-lg-6 ps-5">
+      <div class="category-stock-row">
+        <span class="badge badge-category">{{ category?.name }}</span>
+        <span *ngIf="product.stockQuantity > 0" class="badge badge-in-stock">In Stock</span>
+        <span *ngIf="product.stockQuantity === 0" class="badge badge-out-of-stock">Out of Stock</span>
+      </div>
+
+      <h1 class="product-name">{{ product.name }}</h1>
+
+      <h2 class="product-price">{{ product.price }}</h2>
+
+      <div class="description-section">
+        <h6>Description</h6>
+        <p class="description-text">
+          {{ product.description }}
+        </p>
+      </div>
+
+      <div class="quantity-section">
+        <span class="quantity-label">Available Quantity:</span>
+        <div class="quantity-display">{{ product.stockQuantity }}</div>
+      </div>
+
+      <div class="buttons-row">
+        <button class="btn btn-primary">
+          <i class="bi bi-cart"></i> Add to Cart
+        </button>
+        <button class="btn btn-secondary">
+          <i class="bi bi-heart"></i>
+        </button>
+        <button class="btn btn-secondary">
+          <i class="bi bi-share"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

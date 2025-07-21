@@ -1,0 +1,109 @@
+.card {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease-in-out, box-shadow 0.25s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  min-height: 300px;
+  max-height: 300px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card-body h5 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffc107;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stars {
+  font-size: 1.1rem;
+}
+
+.rating-text {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-dark {
+  background-color: #222;
+  color: white;
+}
+
+.btn-dark:hover {
+  background-color: #000;
+}
+
+.btn-outline-secondary {
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: #333;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f2f2f2;
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover .image-container img {
+  transform: scale(1.05);
+}
+
+.action-icons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
