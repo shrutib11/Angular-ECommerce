@@ -14,31 +14,33 @@ import { AlertService } from '../../shared/alert/alert.service';
   styleUrl: './user-list.component.css'
 })
 export class UserListComponent {
-users: UserModel[] = [];
-selectedUser!: UserModel;
-@Input() showModal: boolean = false;
-@Input() isUpsertCompleted: boolean = false;
-  constructor(private userService: UserService,private alertService : AlertService) { }
+  isLoading = true;
+  users: UserModel[] = [];
+  selectedUser!: UserModel;
+  @Input() showModal: boolean = false;
+  @Input() isUpsertCompleted: boolean = false;
+  constructor(private userService: UserService, private alertService: AlertService) { }
 
-    showEditModal(user: UserModel): void {
-      this.selectedUser = user;
-
-      this.showModal = true;
-    }
-    onUpsertCompleted(upsertCompleted : boolean){
-      this.isUpsertCompleted = true;
-      this.showModal = false;
-      this.ngOnInit();
-    }
+  showEditModal(user: UserModel): void {
+    this.selectedUser = user;
+    this.showModal = true;
+  }
+  onUpsertCompleted(upsertCompleted: boolean) {
+    this.isUpsertCompleted = true;
+    this.showModal = false;
+    this.ngOnInit();
+  }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (response) => {
         this.users = response.result || [];
-
+        this.isLoading = false;
       },
       error: (error) => {
-       this.alertService.showError('Failed to load users');
+        this.alertService.showError('Failed to load users');
+        this.isLoading = false;
       }
     })
   }

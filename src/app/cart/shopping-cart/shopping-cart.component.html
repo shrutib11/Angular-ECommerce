@@ -1,0 +1,40 @@
+<div class="cart-container">
+  <div class="cart-header d-flex justify-content-between align-items-start">
+    <div>
+      <h1 class="cart-title">Shopping Cart</h1>
+      <p class="cart-subtitle">{{ cartItems.length }} items in your cart</p>
+    </div>
+    <a
+      href="#"
+      (click)="onContinueShopping()"
+      class="continue-shopping"
+    >
+      <i class="fas fa-arrow-left"></i>
+      Continue Shopping
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 cart-list-container">
+      <app-cart-list
+        [items]="cartItems"
+        (quantityUpdate)="onQuantityUpdate($event)"
+        (removeItem)="onRemoveItem($event)"
+      ></app-cart-list>
+    </div>
+
+    <div class="col-lg-4">
+      <app-cart-summary
+        [items]="cartItems"
+        (checkout)="onCheckout()"
+      ></app-cart-summary>
+    </div>
+  </div>
+
+  <app-update-quantity-modal
+    [item]="selectedItem"
+    [isOpen]="isModalOpen"
+    (close)="onCloseModal()"
+    (update)="onUpdateQuantity($event)"
+  ></app-update-quantity-modal>
+</div>

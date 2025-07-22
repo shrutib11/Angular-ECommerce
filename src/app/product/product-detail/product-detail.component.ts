@@ -11,7 +11,7 @@ import { AlertService } from '../../shared/alert/alert.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule,RouterModule, IndianCurrencyPipe],
+  imports: [CommonModule,RouterModule],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })

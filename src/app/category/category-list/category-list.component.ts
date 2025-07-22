@@ -39,7 +39,7 @@ export class CategoryListComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.alertService.showError(error.statusText)
+        this.alertService.showError("Failed to Fetch categories")
         this.isLoading = false;
       }
     });

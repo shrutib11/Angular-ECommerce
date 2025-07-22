@@ -1,0 +1,42 @@
+<div class="order-summary">
+  <h4>Order Summary</h4>
+
+  <div class="summary-row">
+    <span class="summary-label">Subtotal ({{ items.length }} items)</span>
+    <span class="summary-value">&#8377;{{ subtotal }}</span>
+  </div>
+
+  <div class="summary-row">
+    <span class="summary-label">Shipping</span>
+    <span class="summary-value">{{ hasFreeShipping ? 'Free' : ('&#8377;' + shipping) }}</span>
+  </div>
+
+  <div *ngIf="hasFreeShipping" class="free-shipping">
+    <i class="fas fa-shipping-fast"></i>
+    <span>Free shipping on orders over &#8377;100!</span>
+  </div>
+
+  <div class="summary-row">
+    <span class="summary-label">Tax</span>
+    <span class="summary-value">&#8377;{{ tax }}</span>
+  </div>
+
+  <div class="summary-row">
+    <span class="summary-label">Plateform Fee</span>
+    <span class="summary-value">&#8377;{{ plateformFee }}</span>
+  </div>
+
+  <div class="summary-total">
+    <div class="total-row">
+      <span>Total</span>
+      <span>&#8377;{{ total }}</span>
+    </div>
+  </div>
+
+  <button
+    (click)="onCheckout()"
+    class="checkout-btn"
+  >
+    Proceed to Checkout
+  </button>
+</div>

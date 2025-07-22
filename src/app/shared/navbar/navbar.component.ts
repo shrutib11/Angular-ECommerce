@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserAddEditComponent } from '../../user/user-add-edit/user-add-edit.component';
 import { UserModel } from '../../models/user.model';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,9 +11,10 @@ import { UserModel } from '../../models/user.model';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isRegister: boolean = false;
   @Input() showModal: boolean = false;
+  cartCount: number = 0;
   user: UserModel = {
     id: 0,
     firstName: '',
@@ -28,5 +30,15 @@ export class NavbarComponent {
   Register() {
     this.isRegister = true;
     this.showModal = true;
+  }
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
+    });
+
+    this.cartService.getCartItems().subscribe();
   }
 }

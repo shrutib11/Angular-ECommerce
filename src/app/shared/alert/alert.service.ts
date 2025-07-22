@@ -13,9 +13,14 @@ export class AlertService {
       toast: true,
       icon: 'success',
       title: message,
+      iconColor: 'white',
       position: 'top-end',
+      showCloseButton: true,
       showConfirmButton: false,
       timer: 3000,
+      customClass: {
+        popup: 'colored-toast',
+      },
       timerProgressBar: true,
       didOpen: (toast) => {
         toast.addEventListener('mouseenter', Swal.stopTimer);
@@ -29,9 +34,14 @@ export class AlertService {
       toast: true,
       icon: 'error',
       title: message,
+      iconColor: 'white',
       position: 'top-end',
+      showCloseButton: true,
       showConfirmButton: false,
       timer: 3000,
+      customClass: {
+        popup: 'colored-toast',
+      },
       timerProgressBar: true
     });
   }
