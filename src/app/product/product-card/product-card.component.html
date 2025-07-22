@@ -22,7 +22,7 @@
     <p class="price">{{ product.price }}</p>
 
     <div class="buttons mb-2">
-      <button class="btn btn-dark">
+      <button class="btn btn-dark" (click)="onAddToCart()">
         Add to Cart
       </button>
       <button class="btn btn-outline-secondary" routerLink="/products/details/{{ product.id }}">

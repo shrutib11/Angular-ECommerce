@@ -15,6 +15,7 @@ export class DeleteConfirmationComponent {
   @Input() itemName: string = '';
   @Input() isLoading: boolean = false;
   @Input() deleteButtonText: string = 'Delete';
+  @Input() isFromCart: boolean = false;
 
   @Output() confirmed = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
