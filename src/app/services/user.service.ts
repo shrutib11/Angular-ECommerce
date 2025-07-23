@@ -4,13 +4,18 @@ import { Observable } from 'rxjs';
 import { UserModel } from '../models/user.model';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
+import Hashids from 'hashids';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private baseUrl = environment.userBaseUrl;
-  constructor(private http : HttpClient) { }
+  private readonly hashids: Hashids;
+
+  constructor(private http : HttpClient) {
+    this.hashids = new Hashids(environment.secretSalt, 8);
+   }
   getAllUsers() : Observable<ApiResponse<UserModel[]>> {
     return this.http.get<ApiResponse<UserModel[]>>(`${this.baseUrl}/GetAllUsers`);
   }
@@ -24,8 +29,7 @@ export class UserService {
   }
 
   getCurrentUserDetails(userId : number ): Observable<ApiResponse<UserModel>> {
-    return this.http.get<ApiResponse<UserModel>>(`${this.baseUrl}/${userId}`);
+    const hashedId = this.hashids.encode(userId);
+    return this.http.get<ApiResponse<UserModel>>(`${this.baseUrl}/${hashedId}`);
   }
-
-
 }

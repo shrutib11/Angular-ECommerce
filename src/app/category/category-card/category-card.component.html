@@ -16,8 +16,7 @@
   <div class="card-body">
     <h5 class="card-title fw-semibold">{{ category.name }}</h5>
     <p class="card-text text-muted small">{{ category.description }}</p>
-    <!-- <span class="badge bg-light text-muted mb-2">{{ category.productCount }} products</span> -->
-    <button class="btn btn-dark w-100" routerLink="/products/by-category/{{ category.id }}">
+    <button class="btn btn-dark w-100" [routerLink]="['/products/by-category', hashedCategoryId]">
       View Products <i class="bi bi-arrow-right"></i>
     </button>
   </div>

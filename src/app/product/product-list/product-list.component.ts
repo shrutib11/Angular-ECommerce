@@ -11,6 +11,8 @@ import { ProductAddEditComponent } from '../product-add-edit/product-add-edit.co
 import { ReactiveFormsModule } from '@angular/forms';
 import { AlertService } from '../../shared/alert/alert.service';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
+import Hashids from 'hashids';
+import { HashidsService } from '../../services/hashids.service';
 
 @Component({
   selector: 'app-product-list',
@@ -33,21 +35,24 @@ export class ProductListComponent implements OnInit {
    productToDelete: { id: string, name: string } | null = null;
    isDeleting = false;
 
+   private readonly hashids = new Hashids(environment.secretSalt, 8);
 
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     private alertService: AlertService,
+    private hashidsService: HashidsService
   ) {}
 
   ngOnInit(): void {
-    const categoryId = this.route.snapshot.paramMap.get('id');
+    const hashedId = this.route.snapshot.paramMap.get('id') || '';
+    const categoryId = this.hashidsService.decode(hashedId);
 
     if (categoryId) {
-      this.fetchCategoryDetails(+categoryId);
-      this.fetchProductsByCategory(+categoryId);
-      this.receivedCategoryId = +categoryId;
+      this.fetchCategoryDetails(categoryId);
+      this.fetchProductsByCategory(categoryId);
+      this.receivedCategoryId = categoryId;
     } else {
       this.fetchAllProducts();
     }
