@@ -3,7 +3,7 @@
   <div class="image-container">
     <img [src]="getCategoryImageUrl(category.categoryImage)" alt="{{ category.name }}" />
 
-    <div class="action-icons" *ngIf="hover">
+    <div class="action-icons" *ngIf="hover && isAdmin">
       <button class="btn btn-light btn-sm me-1" (click)="onEditClick()" title="Edit">
         <i class="bi bi-pencil"></i>
       </button>

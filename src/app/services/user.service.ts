@@ -22,4 +22,10 @@ export class UserService {
       return this.http.put<ApiResponse<UserModel>>(`${this.baseUrl}/update`, userData);
     }
   }
+
+  getCurrentUserDetails(userId : number ): Observable<ApiResponse<UserModel>> {
+    return this.http.get<ApiResponse<UserModel>>(`${this.baseUrl}/${userId}`);
+  }
+
+
 }

@@ -14,6 +14,7 @@ import { AlertService } from '../../shared/alert/alert.service';
   templateUrl: './user-add-edit.component.html',
   styleUrl: './user-add-edit.component.css'
 })
+
 export class UserAddEditComponent implements OnChanges {
   @Input() showModal: boolean = false;
   @Input() user: UserModel = {
@@ -26,7 +27,8 @@ export class UserAddEditComponent implements OnChanges {
     profileImage: '',
     password: '',
     address: '',
-    userImage: ''
+    userImage: '',
+    role: ''
   };
   @Output() closeModal = new EventEmitter<void>();
   imagePreview: string = '';
@@ -36,19 +38,11 @@ export class UserAddEditComponent implements OnChanges {
   isEditing: boolean = false;
   @Output() upsertCompleted = new EventEmitter<boolean>();
 
-  constructor(private fb: FormBuilder, private userService: UserService,private alertService: AlertService) { }
+  constructor(private fb: FormBuilder,
+    private userService: UserService,
+    private alertService: AlertService) { }
 
-  logInvalidControls(): void {
-
-    Object.keys(this.userForm.controls).forEach(key => {
-      const control = this.userForm.get(key);
-      if (control && control.invalid) {
-        console.warn(`❌ Invalid Control: ${key}`, control.errors);
-      }
-    });
-  }
   ngOnInit(): void {
-    this.logInvalidControls();
     this.createForm(this.isEditing);
   }
 
@@ -56,11 +50,9 @@ export class UserAddEditComponent implements OnChanges {
     this.imagePreview = '';
     this.isImageChanged = true;
     this.user.profileImage = '';
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.logInvalidControls();
     if (changes['user'] && changes['user'].currentValue && this.showModal && changes['user'].currentValue.id !== 0) {
       this.user = changes['user'].currentValue;
       this.isEditing = this.user.id > 0;
@@ -69,14 +61,13 @@ export class UserAddEditComponent implements OnChanges {
   }
 
   private createForm(isEditMode: boolean): void {
-
     this.userForm = this.fb.group({
       firstName: [this.user.firstName || '', [Validators.required, Validators.maxLength(50)]],
       lastName: [this.user.lastName || '', [Validators.required, Validators.maxLength(50)]],
       email: [{ value: this.user.email || '', disabled: isEditMode }, [Validators.required, Validators.email]],
       phoneNumber: [this.user.phoneNumber || '', [Validators.required, Validators.pattern(/^\+\d{1,3}[0-9]{10}$/)]],
       pinCode: [this.user.pinCode || '', [Validators.required, Validators.pattern(/^\d{6}$/)]],
-      password: [this.user.password || '', isEditMode ? [] : [
+      password: ['', isEditMode ? [] : [
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(15),
@@ -98,7 +89,6 @@ export class UserAddEditComponent implements OnChanges {
   toPascalCase(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-
 
   async onSubmit() {
     if (this.userForm.invalid) return;
@@ -136,7 +126,6 @@ export class UserAddEditComponent implements OnChanges {
 
     if (this.isEditing) {
       formData.append('Id', this.user.id.toString());
-      console.log(this.user.id);
       formData.delete('Password');
     }
     else {
@@ -150,7 +139,7 @@ export class UserAddEditComponent implements OnChanges {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.alertService.showError(`Failed to ${this.isEditing ? 'update' : 'add'} user: ${error.error.errorMessage }`);
+        this.alertService.showError(`Failed to ${this.isEditing ? 'update' : 'add'} user: ${error.error.errorMessage}`);
       },
       complete: () => {
         this.isSubmitting = false;
@@ -159,19 +148,24 @@ export class UserAddEditComponent implements OnChanges {
     });
   }
 
-
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.isImageChanged = true;
+
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result as string;
-      };
-      reader.readAsDataURL(file);
       this.userForm.patchValue({ userFile: file });
       this.userForm.get('userFile')?.updateValueAndValidity();
+
+      if (!this.userForm.get('userFile')?.errors) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.imagePreview = '';
+      }
     }
   }
 
@@ -180,7 +174,7 @@ export class UserAddEditComponent implements OnChanges {
     const file = control.value;
     if (!file) return null;
 
-    const maxSize = 2 * 1024 * 1024; // 2MB
+    const maxSize = 2 * 1024 * 1024;
     const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
     const ext = file?.name?.substring(file.name.lastIndexOf('.')).toLowerCase();
 

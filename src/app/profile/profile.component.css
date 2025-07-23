@@ -8,9 +8,9 @@
   width: 240px;
   height: 240px;
   border-radius: 50%;
+
   object-fit: cover;
   border: 3px solid #e9ecef;
-  position: relative;
 }
 
 .profile-left{
@@ -123,12 +123,10 @@
 }
 
 .camera-icon {
-  position: absolute;
-  /* bottom: 0; */
-  /* right: 0; */
-  bottom: 380px;
-  left: 625px;
   background: white;
+  position: absolute;
+  top: 85%;
+  left: 74%;
   border: 2px solid #e9ecef;
   border-radius: 50%;
   width: 32px;
@@ -140,10 +138,19 @@
   transition: all 0.2s;
 }
 
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
 .camera-icon:hover {
   background-color: #f8f9fa;
 }
 
 .avatar-container {
   display: inline-block;
+  position: relative;
 }
