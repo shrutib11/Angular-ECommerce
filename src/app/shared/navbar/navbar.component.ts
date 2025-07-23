@@ -3,6 +3,9 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserAddEditComponent } from '../../user/user-add-edit/user-add-edit.component';
 import { UserModel } from '../../models/user.model';
+import { ComponentCommunicationService } from '../../services/component-communication.service';
+import { SessionService } from '../../services/session.service';
+import { CookieService } from 'ngx-cookie-service';
 import { CartService } from '../../services/cart.service';
 
 @Component({
@@ -13,6 +16,10 @@ import { CartService } from '../../services/cart.service';
 })
 export class NavbarComponent implements OnInit {
   isRegister: boolean = false;
+  showNavbar: boolean = true;
+  isAdmin: boolean = false;
+  loggedIn: boolean = false;
+
   @Input() showModal: boolean = false;
   cartCount: number = 0;
   user: UserModel = {
@@ -25,20 +32,51 @@ export class NavbarComponent implements OnInit {
     profileImage: '',
     password: '',
     address: '',
-    userImage: ''
+    userImage: '',
+    role: ''
   };
+
+  constructor(private CommunicationService: ComponentCommunicationService,
+    private sessionService: SessionService,
+    private cookieService: CookieService,
+    private cartService: CartService) { }
+
   Register() {
     this.isRegister = true;
     this.showModal = true;
   }
 
-  constructor(private cartService: CartService) {}
+  logout() {
+    this.cookieService.delete("Token");
+    this.sessionService.clear();
+  }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.CommunicationService.showModal$.subscribe(show => {
+      this.showModal = show
+    })
+    this.CommunicationService.showNavbar$.subscribe(show => {
+
+      this.showNavbar = show
+    })
+    this.CommunicationService.isAdmin$.subscribe(show => {
+      this.isAdmin = show
+    })
+    this.CommunicationService.isLoggedIn$.subscribe(show => {
+      this.loggedIn = show
+    })
+    if (this.cookieService.get('Token')) {
+      this.loggedIn = true;
+    }
+    if (this.sessionService.getUserRole().toLowerCase() == 'admin') {
+      this.isAdmin = true;
+    }
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
 
     this.cartService.getCartItems().subscribe();
   }
+
+
 }

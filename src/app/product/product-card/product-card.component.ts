@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../models/product.model';
 import { IndianCurrencyPipe } from '../../shared/pipes/indian-currency.pipe';
+import { ComponentCommunicationService } from '../../services/component-communication.service';
+import { SessionService } from '../../services/session.service';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
 import { take } from 'rxjs';
@@ -16,12 +18,13 @@ import { take } from 'rxjs';
 })
 export class ProductCardComponent {
   @Input() product: any;
+  isAdmin : boolean = false;
   hover = false;
   isAddingToCart = false;
   @Output() editClicked = new EventEmitter<Product>();
   @Output() deleteClicked = new EventEmitter<{ id: string, name: string }>();
 
-  constructor(private cartService: CartService, private alertService : AlertService) { }
+  constructor(private communicationService : ComponentCommunicationService,private sessionService : SessionService,private cartService: CartService, private alertService : AlertService) { }
 
   getProductImageUrl(path: string): string {
     const fileName = path.split('/').pop();
@@ -31,6 +34,16 @@ export class ProductCardComponent {
   onEditClick() {
     this.editClicked.emit(this.product);
   }
+
+  ngOnInit(){
+    this.communicationService.isAdmin$.subscribe( show => {
+      this.isAdmin = show
+    })
+    if(this.sessionService.getUserRole().toLocaleLowerCase()=='admin'){
+      this.isAdmin = true;
+    }
+  }
+
 
   onDeleteClick() {
     this.deleteClicked.emit({

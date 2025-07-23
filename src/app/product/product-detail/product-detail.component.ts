@@ -60,7 +60,6 @@ export class ProductDetailComponent implements OnInit {
   }
 
    getProductImageUrl(path: string): string {
-      console.log("Image path:", path);
       const fileName = path.split('/').pop();
       return `${environment.baseUrl}/product-uploads/${fileName}`;
     }

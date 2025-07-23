@@ -88,6 +88,19 @@
             />
           </div>
         </div>
+
+        <div
+          class="invalid-feedback text-danger d-flex align-items-center justify-content-center mb-3 pt-4"
+          *ngIf="userForm.get('userFile')?.errors"
+        >
+          <small *ngIf="userForm.get('userFile')?.errors?.['invalidExtension']">
+            Only JPG, JPEG, PNG, and WEBP image files are allowed.
+          </small>
+          <small *ngIf="userForm.get('userFile')?.errors?.['maxSize']">
+            Image size must be less than or equal to 2MB.
+          </small>
+        </div>
+
         <div class="modal-body">
           <div class="d-flex">
             <div class="mb-3 w-50 me-3">
@@ -102,11 +115,13 @@
                 placeholder="Enter First Name"
               />
               <div class="invalid-feedback">
-                <small class="mb-3 mt-3"
+                <small
+                  class="mb-3 mt-3"
                   *ngIf="f['firstName'].touched && f['firstName'].errors?.['required']"
                   >Please provide First Name</small
                 >
-                <small class="mb-3 mt-3"
+                <small
+                  class="mb-3 mt-3"
                   *ngIf="f['firstName'].touched && f['firstName'].errors?.['maxlength']"
                   >First Name should be maximum 50 characters long</small
                 >
@@ -204,8 +219,8 @@
                 >
                 <small
                   *ngIf="f['phoneNumber'].touched && f['phoneNumber']?.errors?.['pattern']"
-                  >Please provide a valid Phone Number</small
-                >
+                  >Please provide a valid Phone Number (Ex. +911234567890)
+                </small>
               </div>
             </div>
             <div class="mb-3 w-50 me-3">
@@ -227,8 +242,9 @@
                 >
                 <small
                   *ngIf="f['pinCode'].touched && f['pinCode']?.errors?.['pattern']"
-                  >Please provide a valid pincode</small
-                >
+                  >Please provide a valid pincode (It should contain exactly 6
+                  numbers)
+                </small>
               </div>
             </div>
           </div>

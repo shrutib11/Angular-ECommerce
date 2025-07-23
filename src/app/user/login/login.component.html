@@ -1,0 +1,68 @@
+<div class="login-container row">
+  <div class="left-panel col-6"></div>
+
+  <div class="right-panel col-6 pt-0">
+    <div class="w-75">
+      <div class="logo-container">
+        <div class="logo"><i class="bi bi-cart"></i></div>
+        <div class="logo-text">ShopHub</div>
+      </div>
+
+      <h2 class="welcome-title">Welcome Back</h2>
+      <p class="welcome-subtitle">Please login to your account</p>
+
+      <form id="loginForm w-75" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-container">
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              placeholder="Enter your password"
+              required
+            />
+            <i
+              class="fas"
+              [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
+              class="password-toggle position-absolute"
+              style="
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+              "
+              (click)="togglePassword()"
+            ></i>
+          </div>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <div class="divider">
+        <span>Or</span>
+      </div>
+
+      <div class="signup-link">
+        Don't have an account?
+        <button class="register-btn" (click)="Register()">Register</button>
+      </div>
+    </div>
+  </div>
+</div>

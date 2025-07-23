@@ -3,6 +3,8 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { Category } from '../../models/category.model';
 import { RouterModule } from '@angular/router';
+import { ComponentCommunicationService } from '../../services/component-communication.service';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-category-card',
@@ -15,8 +17,18 @@ export class CategoryCardComponent implements OnInit {
   hover = false;
   @Output() editClicked = new EventEmitter<Category>();
   @Output() deleteClicked = new EventEmitter<{ id: string, name: string }>();
+  isAdmin: boolean = false;
+  constructor(private communicationService: ComponentCommunicationService,
+    private sessionService: SessionService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.communicationService.isAdmin$.subscribe(show => {
+      this.isAdmin = show;
+    })
+    if (this.sessionService.getUserRole().toLocaleLowerCase() == 'admin') {
+      this.isAdmin = true;
+    }
+  }
 
   getCategoryImageUrl(path: string): string {
     const fileName = path.split('/').pop();

@@ -13,18 +13,21 @@ import { AlertService } from '../../shared/alert/alert.service';
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css'
 })
+
+
 export class UserListComponent {
-  isLoading = true;
-  users: UserModel[] = [];
-  selectedUser!: UserModel;
-  @Input() showModal: boolean = false;
-  @Input() isUpsertCompleted: boolean = false;
-  constructor(private userService: UserService, private alertService: AlertService) { }
+isLoading = true;
+users: UserModel[] = [];
+selectedUser!: UserModel;
+@Input() showModal: boolean = false;
+@Input() isUpsertCompleted: boolean = false;
+  constructor(private userService: UserService,private alertService : AlertService) { }
 
   showEditModal(user: UserModel): void {
     this.selectedUser = user;
     this.showModal = true;
   }
+
   onUpsertCompleted(upsertCompleted: boolean) {
     this.isUpsertCompleted = true;
     this.showModal = false;
@@ -35,6 +38,8 @@ export class UserListComponent {
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (response) => {
+        console.log(response);
+        console.log(response);
         this.users = response.result || [];
         this.isLoading = false;
       },
@@ -44,4 +49,5 @@ export class UserListComponent {
       }
     })
   }
+
 }

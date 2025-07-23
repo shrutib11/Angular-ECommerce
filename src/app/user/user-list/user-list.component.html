@@ -3,15 +3,23 @@
     <span class="visually-hidden">Loading...</span>
   </div>
 </div>
-<div class="card-container w-100 ps-5 pb-5 pe-3 row">
-  <app-user-card *ngFor="let user of users" class="col-3" [user] = "user"
-  (showUserEditModal)="showEditModal($event)"
-  ></app-user-card>
+<div class="user-list">
+  <div class=" title pt-5 d-flex align-items-center justify-content-center">
+    <div class="d-column align-items-center text-center">
+      <h2 class="fw-bold mb-1">User Administration Panel</h2>
+      <p class="text-muted "> Centrally manage user profiles, authentication credentials, and account-related configurations</p>
+    </div>
+  </div>
+  <div class="card-container w-100 row">
+    <app-user-card *ngFor="let user of users" class="col-3" [user] = "user"
+    (showUserEditModal)="showEditModal($event)"
+    ></app-user-card>
+  </div>
+  <app-user-add-edit
+  *ngIf="showModal"
+  [showModal]="showModal"
+  [user]="selectedUser"
+  (closeModal)="showModal = false"
+  (upsertCompleted)="onUpsertCompleted($event)"
+  ></app-user-add-edit>
 </div>
-<app-user-add-edit
-*ngIf="showModal"
-[showModal]="showModal"
-[user]="selectedUser"
-(closeModal)="showModal = false"
-(upsertCompleted)="onUpsertCompleted($event)"
-></app-user-add-edit>

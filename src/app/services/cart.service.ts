@@ -33,9 +33,8 @@ export class CartService {
     );
   }
 
-
-  // Get cart items
   getCartItems(): Observable<CartItem[]> {
+
     return this.http.get<any>(`${this.baseUrl}/GetAll/1`).pipe(
       map(response => {
         const items: CartItem[] = (response.result || []).map((entry: any) => {
@@ -56,7 +55,6 @@ export class CartService {
     );
   }
 
-  // Remove item from cart
   removeFromCart(itemId: number): Observable<any> {
     return this.http.patch(`${this.baseUrl}/${itemId}/delete-item`, {}).pipe(
       tap(() => this.getCartItems().subscribe())

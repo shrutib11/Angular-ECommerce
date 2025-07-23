@@ -1,7 +1,7 @@
 <div class="card" (mouseenter)="hover = true" (mouseleave)="hover = false">
   <div class="image-container">
     <img [src]="getProductImageUrl(product.productImage)" alt="{{ product.name }}" />
-    <div class="action-icons" *ngIf="hover">
+    <div class="action-icons" *ngIf="hover && isAdmin">
       <button class="btn btn-light btn-sm me-1" title="Edit"  (click)="onEditClick()">
         <i class="bi bi-pencil"></i>
       </button>
