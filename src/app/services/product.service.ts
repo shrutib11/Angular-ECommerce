@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { Product } from '../models/product.model';
 import { environment } from '../../environments/environment';
+import Hashids from 'hashids';
 
 @Injectable({
   providedIn: 'root'
@@ -11,19 +12,24 @@ import { environment } from '../../environments/environment';
 export class ProductService {
 
   private baseUrl = environment.productBaseUrl;
+  private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.hashids = new Hashids(environment.secretSalt, 8);
+  }
 
   getAllProducts(): Observable<ApiResponse<Product[]>> {
     return this.http.get<ApiResponse<Product[]>>(`${this.baseUrl}/GetAll`);
   }
 
   getProductsByCategory(categoryId: number): Observable<ApiResponse<Product[]>> {
-    return this.http.get<ApiResponse<Product[]>>(`${this.baseUrl}/GetByCategory/${categoryId}`);
+    const hashedId = this.hashids.encode(categoryId);
+    return this.http.get<ApiResponse<Product[]>>(`${this.baseUrl}/GetByCategory/${hashedId}`);
   }
 
   getProductById(productId: number): Observable<ApiResponse<Product>> {
-    return this.http.get<ApiResponse<Product>>(`${this.baseUrl}/${productId}`);
+    const hashedId = this.hashids.encode(productId);
+    return this.http.get<ApiResponse<Product>>(`${this.baseUrl}/${hashedId}`);
   }
 
   addProduct(productData: FormData): Observable<ApiResponse<Product>> {
@@ -35,6 +41,7 @@ export class ProductService {
   }
 
   deleteProduct(productId: number): Observable<ApiResponse<any>> {
-    return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${productId}`, {});
+    const hashedId = this.hashids.encode(productId);
+    return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${hashedId}`, {});
   }
 }

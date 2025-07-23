@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { CartItem } from '../models/cart-item.model';
 import { HttpClient } from '@angular/common/http';
+import Hashids from 'hashids';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,11 @@ export class CartService {
 
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
+  private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.hashids = new Hashids(environment.secretSalt, 8);
+  }
 
   addToCart(productId: number, quantity: number = 1, priceAtAddTime?: number): Observable<any> {
     const formData = new FormData();
@@ -56,7 +60,8 @@ export class CartService {
   }
 
   removeFromCart(itemId: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${itemId}/delete-item`, {}).pipe(
+    const hashedId = this.hashids.encode(itemId);
+    return this.http.patch(`${this.baseUrl}/${hashedId}/delete-item`, {}).pipe(
       tap(() => this.getCartItems().subscribe())
     );
   }

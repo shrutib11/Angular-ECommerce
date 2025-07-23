@@ -5,6 +5,7 @@ import { Category } from '../../models/category.model';
 import { RouterModule } from '@angular/router';
 import { ComponentCommunicationService } from '../../services/component-communication.service';
 import { SessionService } from '../../services/session.service';
+import Hashids from 'hashids';
 
 @Component({
   selector: 'app-category-card',
@@ -20,6 +21,12 @@ export class CategoryCardComponent implements OnInit {
   isAdmin: boolean = false;
   constructor(private communicationService: ComponentCommunicationService,
     private sessionService: SessionService) { }
+
+    private readonly hashids = new Hashids(environment.secretSalt, 8);
+
+    get hashedCategoryId(): string {
+      return this.hashids.encode(this.category.id);
+    }
 
   ngOnInit(): void {
     this.communicationService.isAdmin$.subscribe(show => {

@@ -4,21 +4,26 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { Category } from '../models/category.model';
 import { environment } from '../../environments/environment';
+import Hashids from 'hashids';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
   private baseUrl = environment.categoryBaseUrl;
+  private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.hashids = new Hashids(environment.secretSalt, 8);
+   }
 
   getAllCategories(): Observable<ApiResponse<Category[]>> {
     return this.http.get<ApiResponse<Category[]>>(`${this.baseUrl}/GetAll`)
   }
 
   getCategoryById(categoryId: string): Observable<ApiResponse<Category>> {
-    return this.http.get<ApiResponse<Category>>(`${this.baseUrl}/${categoryId}`);
+    const hashedId = this.hashids.encode(categoryId);
+    return this.http.get<ApiResponse<Category>>(`${this.baseUrl}/${hashedId}`);
   }
 
   addCategory(categoryData: FormData): Observable<ApiResponse<Category>> {
@@ -30,6 +35,7 @@ export class CategoryService {
   }
 
   deleteCategory(categoryId: string): Observable<ApiResponse<any>> {
-    return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${categoryId}`, {});
+    const hashedId = this.hashids.encode(categoryId);
+    return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${hashedId}`, {});
   }
 }
