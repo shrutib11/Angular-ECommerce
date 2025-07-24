@@ -13,7 +13,7 @@ import Hashids from 'hashids';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule,CommonModule, IndianCurrencyPipe],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })

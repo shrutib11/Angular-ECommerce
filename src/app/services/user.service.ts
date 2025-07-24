@@ -32,4 +32,8 @@ export class UserService {
     const hashedId = this.hashids.encode(userId);
     return this.http.get<ApiResponse<UserModel>>(`${this.baseUrl}/${hashedId}`);
   }
+
+  userlogout() : Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {});
+  }
 }

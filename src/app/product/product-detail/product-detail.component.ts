@@ -12,7 +12,7 @@ import { HashidsService } from '../../services/hashids.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule, IndianCurrencyPipe],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
