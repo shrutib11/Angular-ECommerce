@@ -38,8 +38,6 @@ selectedUser!: UserModel;
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (response) => {
-        console.log(response);
-        console.log(response);
         this.users = response.result || [];
         this.isLoading = false;
       },

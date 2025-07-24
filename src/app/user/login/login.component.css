@@ -80,7 +80,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 35px;
+  margin-bottom: 25px;
 }
 
 .logo {
@@ -112,7 +112,7 @@ body {
 .welcome-subtitle {
   color: #666;
   font-size: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .form-group {
@@ -145,21 +145,28 @@ body {
 
 .password-container {
   position: relative;
+  display: inline-block;
+  width: 100%;
 }
 
-.password-toggle {
+.password-toggle-icon {
   position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 35%;
+  right: 12px;
   cursor: pointer;
-  color: #666;
+  z-index: 2;
+  color: #6c757d;
+  pointer-events: auto;
+}
+
+.password-toggle-icon:hover {
+  color: #495057;
 }
 
 .forgot-password {
   text-align: right;
   margin-top: 8px;
-  margin-bottom: 27px;
+  margin-bottom: 20px;
 }
 
 .forgot-password a {
@@ -183,7 +190,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 13px;
+  margin-bottom: 10px;
 }
 
 .login-btn:hover {

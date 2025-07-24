@@ -9,37 +9,47 @@ import { SessionService } from '../../services/session.service';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
 import { take } from 'rxjs';
+import Hashids from 'hashids';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterModule,CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })
 export class ProductCardComponent {
   @Input() product: any;
-  isAdmin : boolean = false;
+  isAdmin: boolean = false;
   hover = false;
   isAddingToCart = false;
+  private readonly hashids = new Hashids(environment.secretSalt, 8);
+  isLoggedIn: boolean = false;
   @Output() editClicked = new EventEmitter<Product>();
   @Output() deleteClicked = new EventEmitter<{ id: string, name: string }>();
 
-  constructor(private communicationService : ComponentCommunicationService,private sessionService : SessionService,private cartService: CartService, private alertService : AlertService) { }
+  constructor(private communicationService: ComponentCommunicationService, private route: Router, private sessionService: SessionService, private cartService: CartService, private alertService: AlertService) { }
 
   getProductImageUrl(path: string): string {
     const fileName = path.split('/').pop();
     return `${environment.baseUrl}/product-uploads/${fileName}`;
   }
 
+  get hashedProductId(): string {
+    return this.hashids.encode(this.product.id);
+  }
+
   onEditClick() {
     this.editClicked.emit(this.product);
   }
 
-  ngOnInit(){
-    this.communicationService.isAdmin$.subscribe( show => {
+  ngOnInit() {
+    this.communicationService.isAdmin$.subscribe(show => {
       this.isAdmin = show
     })
-    if(this.sessionService.getUserRole().toLocaleLowerCase()=='admin'){
+    if(this.sessionService.getUserId() != 0){
+      this.isLoggedIn = true
+    }
+    if (this.sessionService.getUserRole().toLocaleLowerCase() == 'admin') {
       this.isAdmin = true;
     }
   }
@@ -57,35 +67,42 @@ export class ProductCardComponent {
 
     this.isAddingToCart = true;
 
+    if (!this.isLoggedIn) {
+      this.isAddingToCart = false;
+      this.route.navigate(['/login']);
+    }
+    else {
+      this.cartService.cartItems$.pipe(take(1)).subscribe((items) => {
+        const existingItem = items.find(item => item.productId === this.product.id);
+
+        if (existingItem) {
+          const newQuantity = (existingItem.quantity ?? 0) + 1;
+
+          this.cartService.updateItemQuantity(existingItem.id, newQuantity).subscribe({
+            next: () => {
+              this.alertService.showSuccess('Quantity updated in cart');
+              this.isAddingToCart = false;
+            },
+            error: () => {
+              this.alertService.showError('Error updating cart');
+              this.isAddingToCart = false;
+            }
+          });
+        } else {
+          this.cartService.addToCart(this.product.id, 1, this.product.price).subscribe({
+            next: () => {
+              this.alertService.showSuccess('Item added to cart');
+              this.isAddingToCart = false;
+            },
+            error: () => {
+              this.alertService.showError('Error adding item to cart');
+              this.isAddingToCart = false;
+            }
+          });
+        }
+      });
+    }
+
     //unsubscribe automatically from cartItems$ observable after getting the latest cart list once.
-    this.cartService.cartItems$.pipe(take(1)).subscribe((items) => {
-      const existingItem = items.find(item => item.productId === this.product.id);
-
-      if (existingItem) {
-        const newQuantity = (existingItem.quantity ?? 0) + 1;
-
-        this.cartService.updateItemQuantity(existingItem.id, newQuantity).subscribe({
-          next: () => {
-            this.alertService.showSuccess('Quantity updated in cart');
-            this.isAddingToCart = false;
-          },
-          error: () => {
-            this.alertService.showError('Error updating cart');
-            this.isAddingToCart = false;
-          }
-        });
-      } else {
-        this.cartService.addToCart(this.product.id, 1, this.product.price).subscribe({
-          next: () => {
-            this.alertService.showSuccess('Item added to cart');
-            this.isAddingToCart = false;
-          },
-          error: () => {
-            this.alertService.showError('Error adding item to cart');
-            this.isAddingToCart = false;
-          }
-        });
-      }
-    });
   }
 }

@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { IndianCurrencyPipe } from '../../shared/pipes/indian-currency.pipe';
 import { AlertService } from '../../shared/alert/alert.service';
+import { HashidsService } from '../../services/hashids.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,6 +24,7 @@ export class ProductDetailComponent implements OnInit {
 
 
   constructor(
+    private hashidsService: HashidsService,
     private productService: ProductService,
     private route: ActivatedRoute,
     private categoryService: CategoryService,
@@ -30,10 +32,10 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const productId = this.route.snapshot.paramMap.get('id');
+    const hashedId = this.route.snapshot.paramMap.get('id') || '';
+    const productId = this.hashidsService.decode(hashedId);
 
     if (productId) {
-
       this.productService.getProductById(+productId).subscribe({
         next: (response) => {
           this.product = response.result;

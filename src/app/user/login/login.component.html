@@ -11,7 +11,7 @@
       <h2 class="welcome-title">Welcome Back</h2>
       <p class="welcome-subtitle">Please login to your account</p>
 
-      <form id="loginForm w-75" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <form id="loginForm" [formGroup]="loginForm" (ngSubmit)="onLogin()">
         <div class="form-group">
           <label class="form-label">Email address</label>
           <input
@@ -19,33 +19,81 @@
             class="form-control"
             formControlName="email"
             placeholder="Enter your email"
+            [ngClass]="{
+              'is-invalid':
+                loginForm.get('email')?.invalid &&
+                loginForm.get('email')?.touched
+            }"
             required
           />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+            "
+          >
+            <small
+              class="mb-3 mt-3"
+              *ngIf="loginForm.get('email')?.errors?.['required']"
+              >Please provide registerd email</small
+            >
+            <small
+              class="mb-3 mt-3"
+              *ngIf="loginForm.get('email')?.errors?.['email']"
+              >Please provide valid email address</small
+            >
+          </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">Password</label>
-          <div class="password-container">
+          <div class="password-container" style="position: relative; display: inline-block; width: 100%;">
             <input
-              type="password"
+              [type]="passwordVisible ? 'text' : 'password'"
               class="form-control"
+              style="padding-right: 40px;"
               formControlName="password"
               placeholder="Enter your password"
+              [ngClass]="{
+                'is-invalid':
+                  loginForm.get('password')?.invalid &&
+                  loginForm.get('password')?.touched
+              }"
               required
             />
             <i
               class="fas"
               [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
-              class="password-toggle position-absolute"
               style="
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
+                position: absolute;
+                top: 35%;
+                right: 12px;
                 cursor: pointer;
+                z-index: 2;
+                color: #6c757d;
+                pointer-events: auto;
               "
               (click)="togglePassword()"
             ></i>
+
           </div>
+
+          <!-- Error Messages - Outside the input container -->
+          <div class="invalid-feedback"
+               [style.display]="(loginForm.get('password')?.invalid && loginForm.get('password')?.touched) ? 'block' : 'none'">
+            <small
+              class="text-danger d-block mt-1"
+              *ngIf="loginForm.get('password')?.errors?.['required']"
+              >Please provide password</small
+            >
+            <small
+              class="text-danger d-block mt-1"
+              *ngIf="loginForm.get('password')?.errors?.['pattern']"
+              >Password must contain at least one uppercase letter, one lowercase
+              letter, one digit, and one special character, and be between 8 to 15
+              characters long.</small
+            >
+          </div>
+
         </div>
 
         <div class="forgot-password">

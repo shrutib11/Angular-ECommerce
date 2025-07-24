@@ -19,6 +19,8 @@ export class SessionService {
     this.saveSession(session);
   }
 
+ 
+
   getUserRole(){
     return this.getSession().role;
   }
