@@ -68,8 +68,8 @@
           <div class="mb-3">
             <label for="productImage" class="form-label">Product Image *</label>
             <input #fileInput type="file" class="form-control" id="productImage" accept="image/*"
-              (change)="onFileSelected($event)" [class.is-invalid]="!selectedFile && submitted">
-            <div class="invalid-feedback" *ngIf="!selectedFile && submitted">
+              (change)="onFileSelected($event)" [class.is-invalid]="!selectedFile && submitted && !imagePreview ">
+            <div class="invalid-feedback" *ngIf="!selectedFile && submitted && !imagePreview">
               <small>Please select an image for the product</small>
             </div>
           </div>

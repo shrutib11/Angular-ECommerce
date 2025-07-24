@@ -285,8 +285,7 @@
           <button
             type="submit"
             class="btn btn-primary p-2 ps-3 pe-3"
-            [disabled]="userForm.invalid"
-          >
+            [disabled]="userForm.invalid || isSubmitting">
             <span
               *ngIf="isSubmitting"
               class="spinner-border spinner-border-sm me-1"

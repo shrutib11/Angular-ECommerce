@@ -19,7 +19,7 @@
       <span class="rating-text">4.4 (203)</span>
     </div>
 
-    <p class="price">{{ product.price }}</p>
+    <p class="price">{{ product.price | indianCurrency  }}</p>
 
     <div class="buttons mb-2">
       <button class="btn btn-dark" (click)="onAddToCart()">

@@ -7,6 +7,7 @@ import { ComponentCommunicationService } from '../../services/component-communic
 import { SessionService } from '../../services/session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from '../../services/cart.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -39,7 +40,8 @@ export class NavbarComponent implements OnInit {
   constructor(private CommunicationService: ComponentCommunicationService,
     private sessionService: SessionService,
     private cookieService: CookieService,
-    private cartService: CartService) { }
+    private cartService: CartService,
+    private userService: UserService) { }
 
   Register() {
     this.isRegister = true;
@@ -47,8 +49,17 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    this.cookieService.delete("Token");
-    this.sessionService.clear();
+
+    this.userService.userlogout().subscribe({
+      next: (response) => {
+        console.log('Logout successful:', response);
+        this.cookieService.delete("Token");
+        this.sessionService.clear();
+      },
+      error: (err) => {
+        console.error('Logout failed:', err);
+      }
+    });
   }
 
   ngOnInit() {
