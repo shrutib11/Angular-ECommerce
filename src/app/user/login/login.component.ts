@@ -7,6 +7,8 @@ import { AppCookieService } from '../../services/cookie.service';
 import { SessionService } from '../../services/session.service';
 import { Router } from '@angular/router';
 import { ComponentCommunicationService } from '../../services/component-communication.service';
+import { CartService } from '../../services/cart.service';
+import { CartModel } from '../../models/cart.model';
 
 @Component({
   selector: 'app-login',
@@ -18,25 +20,31 @@ import { ComponentCommunicationService } from '../../services/component-communic
 export class LoginComponent {
   loginForm: FormGroup = new FormGroup({});
   passwordVisible: boolean = false;
-  @Output() onRegister = new EventEmitter<void>();
+  // @Output() onRegister = new EventEmitter<void>();
   isSubmitted = false;
+  userCart: CartModel = {
+    id: null,
+    userId: 0,
+  };
 
   constructor(private authService: AuthenticationService,
     private alertService: AlertService,
     private cookieService: AppCookieService,
     private router: Router,
     private sessionService: SessionService,
-    private modalService: ComponentCommunicationService) {
+    private modalService: ComponentCommunicationService,
+    private cartService: CartService) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required,])
+      password: new FormControl('', [Validators.required, Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(15),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)])
     })
   }
 
   Register() {
     this.modalService.openModal();
-
-    this.onRegister.emit();
   }
 
   togglePassword(): void {
@@ -56,6 +64,7 @@ export class LoginComponent {
         formData.append(key, control.value);
       }
     });
+
     if (this.loginForm.valid) {
       this.authService.login(formData).subscribe({
         next: (response) => {
@@ -72,6 +81,26 @@ export class LoginComponent {
           else {
             this.modalService.adminRole();
           }
+          this.cartService.getUserCart(response.result.user.id).subscribe({
+            next: (response) => {
+              this.userCart = { ...response.result };
+              this.sessionService.setCartId(this.userCart.id!);
+            },
+            error: (error: any) => {
+              if (error.error.statusCode == 404) {
+                this.userCart.userId = this.sessionService.getUserId();
+                this.cartService.createCart(this.userCart).subscribe({
+                  next: (response) => {
+                    this.userCart = { ...response.result };
+                    this.sessionService.setCartId(this.userCart.id!);
+                  },
+                  error: (error: any) => {
+                    this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
+                  }
+                })
+              }
+            }
+          })
           this.router.navigate(['/']);
           this.modalService.showNavbar();
         },

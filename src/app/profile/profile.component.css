@@ -54,6 +54,10 @@
   transition: all 0.2s ease;
 }
 
+.admin-badge {
+  background-color: rgb(255, 211, 101);
+}
+
 .form-control:focus {
   border-color: #0d6efd;
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
@@ -66,8 +70,6 @@
 }
 
 .verified-badge {
-  background-color: #d4edda;
-  color: #155724;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -76,6 +78,15 @@
   display: inline-block;
 }
 
+.admin-badge{
+  color: #6f5202;
+  background-color: #ffdca4;
+}
+.user-badge{
+  color: #02356f;
+  background-color: #a4d8ff;
+
+}
 .edit-btn {
   background: none;
   border: 1px solid #dee2e6;

@@ -3,6 +3,9 @@ import { environment } from '../../environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { CartItem } from '../models/cart-item.model';
 import { HttpClient } from '@angular/common/http';
+import { CartModel } from '../models/cart.model';
+import { ApiResponse } from '../models/api-response.model';
+import { SessionService } from './session.service';
 import Hashids from 'hashids';
 
 @Injectable({
@@ -18,7 +21,7 @@ export class CartService {
   public cartItems$ = this.cartItemsSubject.asObservable();
   private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private sessionService : SessionService) {
     this.hashids = new Hashids(environment.secretSalt, 8);
   }
 
@@ -26,7 +29,7 @@ export class CartService {
     const formData = new FormData();
     formData.append('ProductId', productId.toString());
     formData.append('Quantity', quantity.toString());
-    formData.append('CartId', "1");
+    formData.append('CartId',  this.sessionService.getCartId().toString());
 
     if (priceAtAddTime) {
       formData.append('PriceAtAddTime', priceAtAddTime.toString());
@@ -37,9 +40,14 @@ export class CartService {
     );
   }
 
+  createCart(cart : CartModel): Observable<ApiResponse<CartModel>>{
+    const formData = new FormData();
+    formData.append('UserId',cart.userId.toString());
+    return this.http.post<ApiResponse<CartModel>>(`${this.baseUrl}/createcart`,formData);
+  }
   getCartItems(): Observable<CartItem[]> {
 
-    return this.http.get<any>(`${this.baseUrl}/GetAll/1`).pipe(
+    return this.http.get<any>(`${this.baseUrl}/GetAll/${ this.sessionService.getCartId() }`).pipe(
       map(response => {
         const items: CartItem[] = (response.result || []).map((entry: any) => {
           return {
@@ -57,6 +65,10 @@ export class CartService {
         return items;
       })
     );
+  }
+
+  getUserCart(userId : number) : Observable<ApiResponse<CartModel>>{
+    return this.http.get<ApiResponse<CartModel>>(`${this.baseUrl}/GetUserCart/${userId}`);
   }
 
   removeFromCart(itemId: number): Observable<any> {

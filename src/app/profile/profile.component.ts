@@ -76,6 +76,7 @@ export class ProfileComponent {
         next : (response)=>{
           this.alertService.showSuccess(`profile updated successfully!`);
           this.isEditing = false;
+          this.currentUser = {...response.result};
         },
         error : (error)=>{
           this.alertService.showError(`Failed to update profile : ${error.error.errorMessage}`);

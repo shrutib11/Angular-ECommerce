@@ -10,6 +10,16 @@
   /* border: 0.5px dotted #18a0c9; */
 }
 
+.admin-badge{
+  color: #6f5202;
+  background-color: #ffdca4;
+}
+.user-badge{
+  color: #02356f;
+  background-color: #a4d8ff;
+
+}
+
 .card-header {
   background-color: #f8f9fa;
   padding: 15px;
