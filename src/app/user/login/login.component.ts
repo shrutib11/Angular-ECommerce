@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ComponentCommunicationService } from '../../services/component-communication.service';
 import { CartService } from '../../services/cart.service';
 import { CartModel } from '../../models/cart.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,13 @@ import { CartModel } from '../../models/cart.model';
 
 export class LoginComponent {
   loginForm: FormGroup = new FormGroup({});
+  SendMailForm: FormGroup = new FormGroup({});
+  ResetPasswordForm: FormGroup = new FormGroup({});
   passwordVisible: boolean = false;
+  isLoading: boolean = false;
+  isResetPassword: boolean = false;
+  isNewPassword: boolean = false;
+  receiverEmail: string = '';
   // @Output() onRegister = new EventEmitter<void>();
   isSubmitted = false;
   userCart: CartModel = {
@@ -32,6 +39,7 @@ export class LoginComponent {
     private cookieService: AppCookieService,
     private router: Router,
     private sessionService: SessionService,
+    private userService: UserService,
     private modalService: ComponentCommunicationService,
     private cartService: CartService) {
     this.loginForm = new FormGroup({
@@ -40,8 +48,28 @@ export class LoginComponent {
       Validators.minLength(8),
       Validators.maxLength(15),
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)])
+    });
+
+    this.SendMailForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email])
+    })
+
+    this.ResetPasswordForm = new FormGroup({
+      newPassword: new FormControl('', [Validators.required, Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(15),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)]),
+      confirmPassword: new FormControl('', [Validators.required, Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(15),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)])
     })
   }
+
+  showResetPassword() {
+    this.isResetPassword = true;
+  }
+
 
   Register() {
     this.modalService.openModal();
@@ -49,6 +77,29 @@ export class LoginComponent {
 
   togglePassword(): void {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  sendEmail() {
+    if (this.SendMailForm.valid) {
+      this.receiverEmail = this.SendMailForm.get('email')?.value
+      this.isLoading = true;
+      this.userService.sendEmail(this.receiverEmail).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this.alertService.showSuccess("email sended successfully");
+        },
+        error: (error) => {
+          this.isLoading = false;
+          if (error.statusCode == 404) {
+            this.alertService.showError(error.error.errorMessage);
+          }
+          else {
+            this.alertService.showError(error.error.errorMessage);
+          }
+        }
+
+      })
+    }
   }
 
   ngOnInit() {

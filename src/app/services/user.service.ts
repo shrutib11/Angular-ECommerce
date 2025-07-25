@@ -13,24 +13,32 @@ export class UserService {
   private baseUrl = environment.userBaseUrl;
   private readonly hashids: Hashids;
 
-  constructor(private http : HttpClient) {
+  constructor(private http: HttpClient) {
     this.hashids = new Hashids(environment.secretSalt, 8);
-   }
-  getAllUsers() : Observable<ApiResponse<UserModel[]>> {
+  }
+  getAllUsers(): Observable<ApiResponse<UserModel[]>> {
     return this.http.get<ApiResponse<UserModel[]>>(`${this.baseUrl}/GetAllUsers`);
   }
-  upsert(userData : FormData ): Observable<ApiResponse<UserModel>> {
-    if(userData.get('Id') == '0' || userData.get('Id') === null || userData.get('Id') === undefined) {
+  upsert(userData: FormData): Observable<ApiResponse<UserModel>> {
+    if (userData.get('Id') == '0' || userData.get('Id') === null || userData.get('Id') === undefined) {
       return this.http.post<ApiResponse<UserModel>>(`${this.baseUrl}/register`, userData);
     }
-    else{
+    else {
       return this.http.put<ApiResponse<UserModel>>(`${this.baseUrl}/update`, userData);
     }
   }
 
-  getCurrentUserDetails(userId : number ): Observable<ApiResponse<UserModel>> {
+  sendEmail(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/reset-password`, { email });
+  }
+
+  getCurrentUserDetails(userId: number): Observable<ApiResponse<UserModel>> {
     const hashedId = this.hashids.encode(userId);
     return this.http.get<ApiResponse<UserModel>>(`${this.baseUrl}/${hashedId}`);
+  }
+
+  resetPassword(userData: any): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/reset-password`, userData);
   }
 
   userlogout() : Observable<ApiResponse<any>> {
