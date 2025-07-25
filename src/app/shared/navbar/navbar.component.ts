@@ -49,15 +49,15 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-
-    this.userService.userlogout().subscribe({
-      next: (response) => {
-        this.cookieService.delete("Token");
-        this.sessionService.clear();
-      },
-      error: (err) => {
-      }
-    });
+    this.cookieService.delete("Token");
+    this.sessionService.clear();
+    this.loggedIn = false;
+    // this.userService.userlogout().subscribe({
+    //   next: (response) => {
+    //   },
+    //   error: (err) => {
+    //   }
+    // });
   }
 
   ngOnInit() {

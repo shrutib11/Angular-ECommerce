@@ -7,6 +7,7 @@ import { LoginComponent  } from './user/login/login.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
 import { ShoppingCartComponent } from './cart/shopping-cart/shopping-cart.component';
+import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 import { UnauthorizedComponent } from './shared/pages/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'categories', component: CategoryListComponent },
   { path: 'users', component: UserListComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'user/reset-password/:email', component: ResetPasswordComponent },
   { path: 'cart', component: ShoppingCartComponent},  { path: 'account', component: ProfileComponent},
   { path: 'products', component: ProductListComponent },
   { path: 'products/by-category/:id', component: ProductListComponent },
