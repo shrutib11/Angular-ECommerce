@@ -47,12 +47,21 @@ export class ProductListComponent implements OnInit {
     const categoryId = this.hashidsService.decode(hashedId);
 
     if (categoryId) {
+      this.receivedCategoryId = categoryId;
       this.fetchCategoryDetails(categoryId);
       this.fetchProductsByCategory(categoryId);
-      this.receivedCategoryId = categoryId;
-    } else {
-      this.fetchAllProducts();
+      return;
     }
+
+    this.route.queryParams.subscribe(params => {
+      const searchTerm = params['search'];
+
+      if (searchTerm && searchTerm.trim()) {
+        this.fetchAllProducts(searchTerm.trim());
+      } else {
+        this.fetchAllProducts(); 
+      }
+    });
   }
 
   fetchCategoryDetails(categoryId: number): void {
@@ -85,17 +94,31 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  fetchAllProducts(): void {
-    this.productService.getAllProducts().subscribe({
-      next: (response) => {
-        this.products = response.result;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.alertService.showError(err?.error?.errorMessage || 'Failed to load products.');
-      }
-    });
+  fetchAllProducts(searchTerm?:string): void {
+    if(searchTerm){
+      this.productService.searchProducts(searchTerm).subscribe({
+        next: (response) => {
+          this.products = response.result;
+          this.isLoading = false;
+        }
+      , error: (err) => {
+          this.isLoading = false;
+          this.alertService.showWarning(err?.error?.errorMessage || 'Failed to load products.');
+        }
+      });
+    }else{
+
+      this.productService.getAllProducts().subscribe({
+        next: (response) => {
+          this.products = response.result;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.alertService.showError(err?.error?.errorMessage || 'Failed to load products.');
+        }
+      });
+    }
   }
 
   getCategoryImageUrl(path: string): string {
