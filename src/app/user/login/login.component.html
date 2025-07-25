@@ -100,7 +100,13 @@
           <a href="#">Forgot password?</a>
         </div>
 
-        <button type="submit" class="login-btn">Login</button>
+        <button type="submit" class="login-btn" [disabled]="loginForm.invalid">
+          <span
+              *ngIf="isSubmitted && loginForm.valid"
+              class="spinner-border spinner-border-sm me-1"
+              role="status"
+            ></span>
+            {{ isSubmitted ? "Logging In..." : "Login" }}</button>
       </form>
 
       <div class="divider">

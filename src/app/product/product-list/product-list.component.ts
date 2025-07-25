@@ -11,7 +11,6 @@ import { ProductAddEditComponent } from '../product-add-edit/product-add-edit.co
 import { ReactiveFormsModule } from '@angular/forms';
 import { AlertService } from '../../shared/alert/alert.service';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
-import Hashids from 'hashids';
 import { HashidsService } from '../../services/hashids.service';
 
 @Component({
@@ -34,8 +33,6 @@ export class ProductListComponent implements OnInit {
    showDeleteModal = false;
    productToDelete: { id: string, name: string } | null = null;
    isDeleting = false;
-
-   private readonly hashids = new Hashids(environment.secretSalt, 8);
 
   constructor(
     private productService: ProductService,

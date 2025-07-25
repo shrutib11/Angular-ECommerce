@@ -101,6 +101,7 @@
       <div>
         <a
           routerLink="/cart"
+          *ngIf="loggedIn"
           class="nav-link text-dark"
         >
           <i class="bi bi-cart fs-5"></i>
@@ -111,7 +112,6 @@
           </span>
         </a>
       </div>
-
     </div>
   </div>
 </nav>

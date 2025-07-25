@@ -5,7 +5,7 @@ import { Category } from '../../models/category.model';
 import { RouterModule } from '@angular/router';
 import { ComponentCommunicationService } from '../../services/component-communication.service';
 import { SessionService } from '../../services/session.service';
-import Hashids from 'hashids';
+import { HashidsService } from '../../services/hashids.service';
 
 @Component({
   selector: 'app-category-card',
@@ -20,12 +20,10 @@ export class CategoryCardComponent implements OnInit {
   @Output() deleteClicked = new EventEmitter<{ id: string, name: string }>();
   isAdmin: boolean = false;
   constructor(private communicationService: ComponentCommunicationService,
-    private sessionService: SessionService) { }
-
-    private readonly hashids = new Hashids(environment.secretSalt, 8);
+    private sessionService: SessionService, private hashedService : HashidsService) { }
 
     get hashedCategoryId(): string {
-      return this.hashids.encode(this.category.id);
+      return this.hashedService.encode(this.category.id);
     }
 
   ngOnInit(): void {

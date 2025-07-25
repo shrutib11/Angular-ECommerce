@@ -73,7 +73,6 @@ export class LoginComponent {
           this.sessionService.setUserId(response.result.user.id);
           this.sessionService.setEmail(response.result.user.email);
           this.sessionService.setUserRole(response.result.user.role);
-          this.sessionService.setCartId(1);
           this.modalService.isLoggedIn(true);
           if (response.result.user.role == "User") {
             this.modalService.userRole();
@@ -105,11 +104,10 @@ export class LoginComponent {
           this.modalService.showNavbar();
         },
         error: (error: any) => {
+          this.isSubmitted = false
           this.alertService.showError(`Login failed : ${error.error.errorMessage}`)
-          console.error('Login failed', error);
         }
       })
     }
-
   }
 }

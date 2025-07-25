@@ -5,10 +5,11 @@ import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/de
 import { environment } from '../../../environments/environment';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
+import { IndianCurrencyPipe } from '../../shared/pipes/indian-currency.pipe';
 
 @Component({
   selector: 'app-cart-list',
-  imports: [CommonModule, DeleteConfirmationComponent],
+  imports: [CommonModule, DeleteConfirmationComponent, IndianCurrencyPipe],
   templateUrl: './cart-list.component.html',
   styleUrl: './cart-list.component.css'
 })
@@ -28,7 +29,6 @@ export class CartListComponent {
       return `${environment.baseUrl}/product-uploads/${fileName}`;
     }
 
-
   onQuantityUpdate(item: CartItem): void {
     this.quantityUpdate.emit(item);
   }
@@ -45,14 +45,12 @@ export class CartListComponent {
           this.closeDeleteModal();
           this.alertService.showSuccess('Item Removed Successfully')
         },
-        error: (err) => {
-          console.error('Error removing item:', err);
+        error: () => {
           this.closeDeleteModal();
         }
       });
     }
   }
-
 
   onDeleteCancelled(): void {
     this.closeDeleteModal();

@@ -52,12 +52,10 @@ export class NavbarComponent implements OnInit {
 
     this.userService.userlogout().subscribe({
       next: (response) => {
-        console.log('Logout successful:', response);
         this.cookieService.delete("Token");
         this.sessionService.clear();
       },
       error: (err) => {
-        console.error('Logout failed:', err);
       }
     });
   }
@@ -67,7 +65,6 @@ export class NavbarComponent implements OnInit {
       this.showModal = show
     })
     this.CommunicationService.showNavbar$.subscribe(show => {
-
       this.showNavbar = show
     })
     this.CommunicationService.isAdmin$.subscribe(show => {
@@ -86,8 +83,7 @@ export class NavbarComponent implements OnInit {
       this.cartCount = count;
     });
 
-    this.cartService.getCartItems().subscribe();
+    if(this.loggedIn)
+      this.cartService.getCartItems().subscribe();
   }
-
-
 }
