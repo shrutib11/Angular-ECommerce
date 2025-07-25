@@ -44,4 +44,8 @@ export class ProductService {
     const hashedId = this.hashids.encode(productId);
     return this.http.patch<ApiResponse<any>>(`${this.baseUrl}/Delete/${hashedId}`, {});
   }
+
+  searchProducts(searchTerm: string): Observable<ApiResponse<Product[]>> {
+    return this.http.get<ApiResponse<Product[]>>(`${this.baseUrl}/Search/${encodeURIComponent(searchTerm)}`);
+  }
 }

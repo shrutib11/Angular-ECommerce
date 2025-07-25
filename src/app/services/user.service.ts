@@ -29,7 +29,7 @@ export class UserService {
   }
 
   sendEmail(email: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/reset-password`, { email });
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/sendEmail`, { email });
   }
 
   getCurrentUserDetails(userId: number): Observable<ApiResponse<UserModel>> {

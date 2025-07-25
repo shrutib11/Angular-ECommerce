@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserAddEditComponent } from '../../user/user-add-edit/user-add-edit.component';
 import { UserModel } from '../../models/user.model';
@@ -8,10 +8,11 @@ import { SessionService } from '../../services/session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from '../../services/cart.service';
 import { UserService } from '../../services/user.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule, UserAddEditComponent, CommonModule],
+  imports: [RouterModule, UserAddEditComponent, CommonModule, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -36,12 +37,13 @@ export class NavbarComponent implements OnInit {
     userImage: '',
     role: ''
   };
+  searchText: string = '';
 
   constructor(private CommunicationService: ComponentCommunicationService,
     private sessionService: SessionService,
     private cookieService: CookieService,
     private cartService: CartService,
-    private userService: UserService) { }
+    private router: Router) { }
 
   Register() {
     this.isRegister = true;
@@ -86,4 +88,14 @@ export class NavbarComponent implements OnInit {
     if(this.loggedIn)
       this.cartService.getCartItems().subscribe();
   }
+
+
+  onEnter() {
+    const trimmed = this.searchText.trim();
+    if (trimmed) {
+      this.router.navigate(['/products'], { queryParams: { search: trimmed } });
+    }
+  }
+
+
 }

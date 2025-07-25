@@ -64,4 +64,21 @@ export class AlertService {
     });
     return result.isConfirmed;
   }
+
+  showWarning(message: string) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      title: message,
+      iconColor: 'white',
+      position: 'top-end',
+      showCloseButton: true,
+      showConfirmButton: false,
+      timer: 3000,
+      customClass: {
+        popup: 'colored-toast',
+      },
+      timerProgressBar: true
+    });
+  }
 }
