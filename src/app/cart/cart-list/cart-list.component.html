@@ -10,7 +10,7 @@
         <!-- <div class="item-attributes">
           <span >Color: {{ item.color }}</span>
         </div> -->
-        <div class="item-price">&#8377;{{ item.priceAtAddTime }}</div>
+        <div class="item-price">{{ item.priceAtAddTime | indianCurrency }}</div>
       </div>
 
       <div class="quantity-controls">
