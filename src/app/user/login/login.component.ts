@@ -124,6 +124,7 @@ export class LoginComponent {
           this.sessionService.setUserId(response.result.user.id);
           this.sessionService.setEmail(response.result.user.email);
           this.sessionService.setUserRole(response.result.user.role);
+
           this.modalService.isLoggedIn(true);
           if (response.result.user.role == "User") {
             this.modalService.userRole();
@@ -135,20 +136,10 @@ export class LoginComponent {
             next: (response) => {
               this.userCart = { ...response.result };
               this.sessionService.setCartId(this.userCart.id!);
+              this.sessionService.markSessionReady();
             },
             error: (error: any) => {
-              if (error.error.statusCode == 404) {
-                this.userCart.userId = this.sessionService.getUserId();
-                this.cartService.createCart(this.userCart).subscribe({
-                  next: (response) => {
-                    this.userCart = { ...response.result };
-                    this.sessionService.setCartId(this.userCart.id!);
-                  },
-                  error: (error: any) => {
-                    this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
-                  }
-                })
-              }
+              console.log(error)
             }
           })
           this.router.navigate(['/']);

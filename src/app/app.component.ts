@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
-import { HomeComponent } from './home/home/home.component';
+import { SessionService } from './services/session.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +12,12 @@ import { HomeComponent } from './home/home/home.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'ECommerce';
+
+  constructor(private sessionService : SessionService) {}
+
+  ngOnInit(): void {
+    this.sessionService.initializeSession()
+  }
 }

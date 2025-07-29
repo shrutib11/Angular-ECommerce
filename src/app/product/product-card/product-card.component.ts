@@ -54,7 +54,6 @@ export class ProductCardComponent {
     }
   }
 
-
   onDeleteClick() {
     this.deleteClicked.emit({
       id: this.product.id,

@@ -33,12 +33,12 @@
               My Profile
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a routerLink="/orders" class="dropdown-item d-flex align-items-center gap-2">
               <i class="bi bi-bag-check"></i>
               Order History
             </a>
-          </li>
+          </li> -->
           <li>
             <hr class="dropdown-divider" />
           </li>
@@ -54,7 +54,7 @@
         <a routerLink="/cart" *ngIf="loggedIn" class="nav-link text-dark">
           <i class="bi bi-cart fs-5"></i>
 
-          <span *ngIf="cartCount > 0" class="position-absolute translate-middle badge rounded-pill bg-danger"
+          <span class="position-absolute translate-middle badge rounded-pill bg-danger"
             style="top: 25%;right: 1%;">
             {{ cartCount }}
             <span class="visually-hidden">cart items</span>
