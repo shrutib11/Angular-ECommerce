@@ -54,41 +54,45 @@ export class NavbarComponent implements OnInit {
     this.cookieService.delete("Token");
     this.sessionService.clear();
     this.loggedIn = false;
-    // this.userService.userlogout().subscribe({
-    //   next: (response) => {
-    //   },
-    //   error: (err) => {
-    //   }
-    // });
   }
 
   ngOnInit() {
-    this.CommunicationService.showModal$.subscribe(show => {
-      this.showModal = show
-    })
-    this.CommunicationService.showNavbar$.subscribe(show => {
-      this.showNavbar = show
-    })
-    this.CommunicationService.isAdmin$.subscribe(show => {
-      this.isAdmin = show
-    })
-    this.CommunicationService.isLoggedIn$.subscribe(show => {
-      this.loggedIn = show
-    })
-    if (this.cookieService.get('Token')) {
-      this.loggedIn = true;
-    }
-    if (this.sessionService.getUserRole().toLowerCase() == 'admin') {
-      this.isAdmin = true;
-    }
+    this.CommunicationService.showNavbar$.subscribe(show => this.showNavbar = show);
+
+    this.sessionService.sessionReady$.subscribe(isReady => {
+      if (isReady) {
+        this.initializeNavbar();
+      }
+    });
+
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
-
-    if(this.loggedIn)
-      this.cartService.getCartItems().subscribe();
   }
 
+  private initializeNavbar() {
+    this.CommunicationService.showModal$.subscribe(show => this.showModal = show);
+
+    this.CommunicationService.isAdmin$.subscribe(show => this.isAdmin = show);
+    this.CommunicationService.isLoggedIn$.subscribe(show => {
+      this.loggedIn = show;
+      if (this.loggedIn) {
+        this.cartService.getCartItems().subscribe();
+      }
+    });
+
+    if (this.cookieService.get('Token')) {
+      this.loggedIn = true;
+    }
+
+    if (this.sessionService.getUserRole().toLowerCase() === 'admin') {
+      this.isAdmin = true;
+    }
+
+    if (this.loggedIn) {
+      this.cartService.getCartItems().subscribe();
+    }
+  }
 
   onEnter() {
     const trimmed = this.searchText.trim();
@@ -96,6 +100,4 @@ export class NavbarComponent implements OnInit {
       this.router.navigate(['/products'], { queryParams: { search: trimmed } });
     }
   }
-
-
 }

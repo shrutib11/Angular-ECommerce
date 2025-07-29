@@ -40,8 +40,4 @@ export class UserService {
   resetPassword(userData: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.baseUrl}/reset-password`, userData);
   }
-
-  userlogout() : Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {});
-  }
 }

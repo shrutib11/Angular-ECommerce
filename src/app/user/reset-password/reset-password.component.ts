@@ -39,9 +39,6 @@ export class ResetPasswordComponent {
   resetPassword(){
     if(this.resetPassForm.valid){
       this.isLoading = true;
-      console.log("ok");
-      console.log(this.route.snapshot.paramMap.get('email'))
-      console.log(this.resetPassForm.get('newPassword')?.value)
       const userData = {
         email: this.route.snapshot.paramMap.get('email'),
         newPassword: this.resetPassForm.get('newPassword')?.value
@@ -54,7 +51,6 @@ export class ResetPasswordComponent {
             this.router.navigate(['/login']);
         },
         error : (error) => {
-          console.log(error);
           this.isLoading = false;
           this.alertService.showError(error.error.errorMessage);
         }

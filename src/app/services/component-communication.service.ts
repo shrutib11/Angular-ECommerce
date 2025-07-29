@@ -9,7 +9,9 @@ export class ComponentCommunicationService {
   private adminRoleSubjet = new BehaviorSubject<boolean>(false);
   private loggedInSubject = new BehaviorSubject<boolean>(false);
 
+  //For Register modal visibility
   showModal$ = this.modalSubject.asObservable();
+
   showNavbar$ = this.navbarSubject.asObservable();
   isAdmin$ = this.adminRoleSubjet.asObservable();
   isLoggedIn$ = this.loggedInSubject.asObservable();
