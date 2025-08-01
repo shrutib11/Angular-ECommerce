@@ -6,6 +6,8 @@ import { UserCardComponent } from '../user-card/user-card.component';
 import { CommonModule } from '@angular/common';
 import { UserAddEditComponent } from "../user-add-edit/user-add-edit.component";
 import { AlertService } from '../../shared/alert/alert.service';
+import { SessionService } from '../../services/session.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
@@ -16,12 +18,14 @@ import { AlertService } from '../../shared/alert/alert.service';
 
 
 export class UserListComponent {
-isLoading = true;
-users: UserModel[] = [];
-selectedUser!: UserModel;
-@Input() showModal: boolean = false;
-@Input() isUpsertCompleted: boolean = false;
-  constructor(private userService: UserService,private alertService : AlertService) { }
+  isLoading = true;
+  users: UserModel[] = [];
+  selectedUser!: UserModel;
+  @Input() showModal: boolean = false;
+  @Input() isUpsertCompleted: boolean = false;
+  constructor(private userService: UserService, private alertService: AlertService,
+    private sessionService: SessionService, private router: Router
+  ) { }
 
   showEditModal(user: UserModel): void {
     this.selectedUser = user;
@@ -35,17 +39,24 @@ selectedUser!: UserModel;
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.userService.getAllUsers().subscribe({
-      next: (response) => {
-        this.users = response.result || [];
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.alertService.showError('Failed to load users');
-        this.isLoading = false;
+    this.sessionService.sessionReady$.subscribe((ready) => {
+      if (ready) {
+        this.isLoading = true;
+        this.userService.getAllUsers().subscribe({
+          next: (response) => {
+            this.users = response.result || [];
+            this.isLoading = false;
+          },
+          error: (error) => {
+            this.alertService.showError('Failed to load users');
+            this.isLoading = false;
+          }
+        })
+      } else {
+        this.router.navigate(['/login']);
       }
-    })
+    });
+
   }
 
 }
