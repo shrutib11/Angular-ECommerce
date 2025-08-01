@@ -6,6 +6,7 @@ import { SessionService } from '../services/session.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { AlertService } from '../shared/alert/alert.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -31,7 +32,9 @@ export class ProfileComponent {
 
   currentValues = { ...this.originalValues };
 
-  constructor(private userService: UserService, private sessionService: SessionService, private fb: FormBuilder,private alertService : AlertService) {
+  constructor(private userService: UserService, private sessionService: SessionService, private fb: FormBuilder,private alertService : AlertService,
+    private router: Router
+  ) {
   }
 
   private createForm(): void {
@@ -48,15 +51,27 @@ export class ProfileComponent {
   }
 
   ngOnInit() {
-    this.userService.getCurrentUserDetails(this.sessionService.getUserId()).subscribe({
-      next: (response) => {
-        this.currentUser = response.result;
-        this.createForm();
-        this.formReady = true;
-        this.originalProfileData = { ...this.currentUser };
+    this.sessionService.sessionReady$.subscribe((ready) => {
+      if (ready) {
+        const userId = this.sessionService.getUserId();
+        this.userService.getCurrentUserDetails(userId).subscribe({
+          next: (response) => {
+            console.log('User details:', response);
+            this.currentUser = response.result;
+            this.createForm();
+            this.formReady = true;
+            this.originalProfileData = { ...this.currentUser };
+          },
+          error: () => {
+            this.router.navigate(['/login']);
+          }
+        });
+      }else{
+        this.router.navigate(['/login']);
       }
     });
   }
+
 
   onSubmit() {
     if (this.userProfileForm.valid) {

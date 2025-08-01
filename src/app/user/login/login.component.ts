@@ -137,7 +137,19 @@ export class LoginComponent {
               this.sessionService.markSessionReady();
             },
             error: (error: any) => {
-              console.log(error)
+              if (error.error.statusCode == 404) {
+                this.userCart.userId = this.sessionService.getUserId();
+                this.cartService.createCart(this.userCart).subscribe({
+                  next: (response) => {
+                    this.userCart = { ...response.result };
+                    this.sessionService.setCartId(this.userCart.id!);
+                    this.sessionService.markSessionReady();
+                  },
+                  error: (error: any) => {
+                    this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
+                  }
+                })
+              }
             }
           })
           this.router.navigate(['/']);
