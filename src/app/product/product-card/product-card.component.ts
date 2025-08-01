@@ -8,12 +8,11 @@ import { ComponentCommunicationService } from '../../services/component-communic
 import { SessionService } from '../../services/session.service';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
-import { take } from 'rxjs';
 import Hashids from 'hashids';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterModule,CommonModule, IndianCurrencyPipe],
+  imports: [RouterModule, CommonModule, IndianCurrencyPipe],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })
@@ -46,7 +45,7 @@ export class ProductCardComponent {
     this.communicationService.isAdmin$.subscribe(show => {
       this.isAdmin = show
     })
-    if(this.sessionService.getUserId() != 0){
+    if (this.sessionService.getUserId() != 0) {
       this.isLoggedIn = true
     }
     if (this.sessionService.getUserRole().toLocaleLowerCase() == 'admin') {
@@ -66,42 +65,15 @@ export class ProductCardComponent {
 
     this.isAddingToCart = true;
 
-    if (!this.isLoggedIn) {
-      this.isAddingToCart = false;
-      this.route.navigate(['/login']);
-    }
-    else {
-      this.cartService.cartItems$.pipe(take(1)).subscribe((items) => {
-        const existingItem = items.find(item => item.productId === this.product.id);
-
-        if (existingItem) {
-          const newQuantity = (existingItem.quantity ?? 0) + 1;
-
-          this.cartService.updateItemQuantity(existingItem.id, newQuantity).subscribe({
-            next: () => {
-              this.alertService.showSuccess('Quantity updated in cart');
-              this.isAddingToCart = false;
-            },
-            error: () => {
-              this.alertService.showError('Error updating cart');
-              this.isAddingToCart = false;
-            }
-          });
-        } else {
-          this.cartService.addToCart(this.product.id, 1, this.product.price).subscribe({
-            next: () => {
-              this.alertService.showSuccess('Item added to cart');
-              this.isAddingToCart = false;
-            },
-            error: () => {
-              this.alertService.showError('Error adding item to cart');
-              this.isAddingToCart = false;
-            }
-          });
-        }
-      });
-    }
-
-    //unsubscribe automatically from cartItems$ observable after getting the latest cart list once.
+    this.cartService.addOrUpdateCartItem(this.product, this.isLoggedIn).subscribe({
+      next: () => {
+        this.alertService.showSuccess('Item added/updated in cart');
+        this.isAddingToCart = false;
+      },
+      error: (err) => {
+        this.alertService.showError('Error adding to cart');
+        this.isAddingToCart = false;
+      }
+    });
   }
 }

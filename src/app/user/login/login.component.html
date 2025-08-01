@@ -4,75 +4,50 @@
   </div>
 </div>
 
-<div class="login-container row">
-  <div class="left-panel col-6"></div>
-
-  <div class="right-panel col-6 pt-0">
-    <div class="logo-container">
-      <div class="logo"><i class="bi bi-cart"></i></div>
-      <div class="logo-text">ShopHub</div>
+<div class="login-container">
+  <div class="left-section">
+    <div class="image-wrapper">
+      <img src="assets/login1.jpg" class="left-full-image" />
     </div>
-    <div class="w-75" *ngIf="!isResetPassword">
-      <h2 class="welcome-title">Welcome Back</h2>
-      <p class="welcome-subtitle">Please login to your account</p>
+  </div>
+
+  <div class="right-section">
+    <div class="form-container" *ngIf="!isResetPassword">
+      <div class="form-header">
+        <h2 class="form-title">ShopHub</h2>
+        <p class="form-subtitle">Please login to your account</p>
+      </div>
+
       <form id="loginForm" [formGroup]="loginForm" (ngSubmit)="onLogin()">
         <div class="form-group">
-          <label class="form-label">Email address</label>
-          <input
-            type="email"
-            class="form-control"
-            formControlName="email"
-            placeholder="Enter your email"
+          <label class="form-label" for="email">Email address</label>
+          <input type="email" id="email" class="form-input" formControlName="email" placeholder="Enter your email"
             [ngClass]="{
-              'is-invalid':
-                loginForm.get('email')?.invalid &&
-                loginForm.get('email')?.touched
-            }"
-            required
-          />
-          <div
-            class="invalid-feedback"
-            *ngIf="
+            'is-invalid':
+              loginForm.get('email')?.invalid &&
+              loginForm.get('email')?.touched
+          }" required>
+
+          <div class="invalid-feedback" *ngIf="
               loginForm.get('email')?.invalid && loginForm.get('email')?.touched
-            "
-          >
-            <small
-              class="mb-3 mt-3"
-              *ngIf="loginForm.get('email')?.errors?.['required']"
-            >
-              Please provide registerd email</small
-            >
-            <small
-              class="mb-3 mt-3"
-              *ngIf="loginForm.get('email')?.errors?.['email']"
-            >
-              Please provide valid email address</small
-            >
+            ">
+            <small class="mb-3 mt-3" *ngIf="loginForm.get('email')?.errors?.['required']">
+              Please provide registerd email</small>
+            <small class="mb-3 mt-3" *ngIf="loginForm.get('email')?.errors?.['email']">
+              Please provide valid email address</small>
           </div>
         </div>
+
         <div class="form-group">
-          <label class="form-label">Password</label>
-          <div
-            class="password-container"
-            style="position: relative; display: inline-block; width: 100%"
-          >
-            <input
-              [type]="passwordVisible ? 'text' : 'password'"
-              class="form-control"
-              style="padding-right: 40px"
-              formControlName="password"
-              placeholder="Enter your password"
-              [ngClass]="{
-                'is-invalid':
-                  loginForm.get('password')?.invalid &&
-                  loginForm.get('password')?.touched
-              }"
-              required
-            />
-            <i
-              class="fas"
-              [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
-              style="
+          <label class="form-label" for="password">Password</label>
+          <div class="password-container" style="position: relative; display: inline-block; width: 100%">
+            <input [type]="passwordVisible ? 'text' : 'password'" class="form-input" style="padding-right: 40px"
+              formControlName="password" placeholder="Enter your password" [ngClass]="{
+            'is-invalid':
+              loginForm.get('password')?.invalid &&
+              loginForm.get('password')?.touched
+          }" required />
+            <i class="fas" [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'" style="
                 position: absolute;
                 top: 35%;
                 right: 12px;
@@ -80,101 +55,70 @@
                 z-index: 2;
                 color: #6c757d;
                 pointer-events: auto;
-              "
-              (click)="togglePassword()"
-            ></i>
+              " (click)="togglePassword()"></i>
           </div>
 
-          <div
-            class="invalid-feedback"
-            [style.display]="
+          <div class="invalid-feedback" [style.display]="
               loginForm.get('password')?.invalid &&
               loginForm.get('password')?.touched
                 ? 'block'
                 : 'none'
-            "
-          >
-            <small
-              class="text-danger d-block mt-1"
-              *ngIf="loginForm.get('password')?.errors?.['required']"
-            >
-              Please provide password</small
-            >
-            <small
-              class="text-danger d-block mt-1"
-              *ngIf="loginForm.get('password')?.errors?.['pattern']"
-              >Password must contain at least one uppercase letter, one
+            ">
+            <small class="text-danger d-block mt-1" *ngIf="loginForm.get('password')?.errors?.['required']">
+              Please provide password</small>
+            <small class="text-danger d-block mt-1" *ngIf="loginForm.get('password')?.errors?.['pattern']">Password must
+              contain at least one uppercase letter, one
               lowercase letter, one digit, and one special character, and be
-              between 8 to 15 characters long.</small
-            >
+              between 8 to 15 characters long.</small>
           </div>
         </div>
 
-        <div class="forgot-password">
-          <a (click)="showResetPassword()">Forgot password?</a>
+        <div class="form-options">
+          <label class="checkbox-container">
+          </label>
+          <a (click)="showResetPassword()" class="forgot-link">Forgot password ?</a>
         </div>
 
-        <button type="submit" class="login-btn" [disabled]="loginForm.invalid">
-          <span
-              *ngIf="isSubmitted && loginForm.valid"
-              class="spinner-border spinner-border-sm me-1"
-              role="status"
-            ></span>
-            {{ isSubmitted ? "Logging In..." : "Login" }}</button>
+        <button type="submit" class="submit-btn" [disabled]="loginForm.invalid">
+          <span *ngIf="isSubmitted && loginForm.valid" class="spinner-border spinner-border-sm me-1"
+            role="status"></span>
+          {{ isSubmitted ? "Logging In..." : "Login" }}</button>
       </form>
 
-      <div class="divider">
-        <span>Or</span>
-      </div>
-
-      <div class="signup-link">
-        Don't have an account?
-        <button class="register-btn" (click)="Register()">Register</button>
+      <div class="form-footer">
+        Don't have an account? <button class="register-btn" (click)="Register()">Register</button>
       </div>
     </div>
 
-    <div *ngIf="isResetPassword">
-      <h2 class="welcome-title mb-4">Reset Password</h2>
+    <div *ngIf="isResetPassword" class="form-container">
+      <div class="form-header">
+        <h2 class="form-title">ShopHub</h2>
+        <p class="form-subtitle">Forgot Password</p>
+      </div>
       <form [formGroup]="SendMailForm" (ngSubmit)="sendEmail()">
         <div class="form-group">
-          <label class="mt-2 mb-2">Enter registered Email : </label>
-          <input
-            type="email"
-            class="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            formControlName="email"
-            placeholder="Enter email"
-          />
+          <label class="form-label">Enter registered Email : </label>
+          <input type="email" class="form-input"
+          placeholder="Enter Email"
+            formControlName="email" [ngClass]="{
+              'is-invalid':
+              SendMailForm.get('email')?.invalid &&
+              SendMailForm.get('email')?.touched
+            }" required/>
         </div>
-        <button class="login-btn">Send</button>
-        <div class="d-flex align-items-center justify-content-center">
-          <a href="#">back to login</a>
+        <div class="invalid-feedback" *ngIf="
+        SendMailForm.get('email')?.invalid && SendMailForm.get('email')?.touched
+      ">
+            <small class="mb-3 mt-3" *ngIf="SendMailForm.get('email')?.errors?.['required']">
+              Please provide registerd email</small>
+            <small class="mb-3 mt-3" *ngIf="SendMailForm.get('email')?.errors?.['email']">
+              Please provide valid email address</small>
+          </div>
+        <button type="submit" class="submit-btn" [disabled]="SendMailForm.invalid">{{ isLoading ? "Sending..." : "Send" }}</button>
+        <div class="form-footer">
+          <a (click)="backToLogin()">Back to login</a>
         </div>
       </form>
     </div>
-
-    <form action="" *ngIf="isNewPassword">
-      <div class="form-group">
-        <label for="exampleInputEmail1">Enter New Password : </label>
-        <input
-          type="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          placeholder="Enter email"
-        />
-      </div>
-      <div class="form-group">
-        <label for="exampleInputEmail1">Confirm Password : </label>
-        <input
-          type="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          placeholder="Enter email"
-        />
-      </div>
-    </form>
   </div>
 </div>

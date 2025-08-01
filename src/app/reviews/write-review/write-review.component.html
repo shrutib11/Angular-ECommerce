@@ -1,0 +1,76 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onOverlayClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2 class="modal-title">Write a Review</h2>
+      <button
+        class="close-button"
+        (click)="onClose()"
+        [disabled]="isSubmitting"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label class="form-label">
+          Rate this product <span class="required">*</span>
+        </label>
+        <app-star-rating
+          [rating]="rating"
+          [interactive]="!isSubmitting"
+          [showRatingText]="false"
+          (ratingChange)="onRatingChange($event)"
+        ></app-star-rating>
+        <div *ngIf="errors.rating" class="error-message">
+          {{ errors.rating }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="comments" class="form-label">Your Review</label>
+        <textarea
+          id="comments"
+          [(ngModel)]="comments"
+          placeholder="Share your thoughts about this product..."
+          class="form-textarea"
+          [class.error]="errors.comments"
+          rows="4"
+          maxlength="500"
+          [disabled]="isSubmitting"
+        ></textarea>
+        <div class="character-count">
+          {{ comments.length }}/500 characters
+        </div>
+        <div *ngIf="errors.comments" class="error-message">
+          {{ errors.comments }}
+        </div>
+      </div>
+
+      <div *ngIf="errors.submit" class="error-banner">
+        <p>{{ errors.submit }}</p>
+      </div>
+
+      <div class="button-group">
+        <button
+          type="button"
+          class="button button-secondary"
+          (click)="onClose()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="button button-primary"
+          (click)="onSubmit()"
+          [disabled]="isSubmitting"
+        >
+          {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

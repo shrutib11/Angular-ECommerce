@@ -58,6 +58,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.CommunicationService.showNavbar$.subscribe(show => this.showNavbar = show);
+    this.CommunicationService.showModal$.subscribe(show => this.showModal = show);
 
     this.sessionService.sessionReady$.subscribe(isReady => {
       if (isReady) {
@@ -71,7 +72,6 @@ export class NavbarComponent implements OnInit {
   }
 
   private initializeNavbar() {
-    this.CommunicationService.showModal$.subscribe(show => this.showModal = show);
 
     this.CommunicationService.isAdmin$.subscribe(show => this.isAdmin = show);
     this.CommunicationService.isLoggedIn$.subscribe(show => {

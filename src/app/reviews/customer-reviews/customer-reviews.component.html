@@ -1,0 +1,65 @@
+<div class="customer-reviews-container" [class.backgroundClass] = "asModal">
+
+  <div class="star-rating-display">
+    <span *ngFor="let filled of getStarArray()"
+          class="star"
+          [class.filled]="filled">
+      ★
+    </span>
+  </div>
+
+  <div class="average-rating">
+    <span class="rating-number">{{ reviewData.averageRating.toFixed(1) }}</span>
+    <span class="rating-text">out of 5</span>
+  </div>
+
+  <div class="total-reviews">
+    {{ formatNumber(reviewData.totalReviews) }} global ratings
+  </div>
+
+  <div class="rating-breakdown">
+    <div class="rating-row">
+      <span class="star-label">5 star</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.fiveStar"></div>
+      </div>
+      <span class="percentage">{{ reviewData.ratingBreakdown.fiveStar }}%</span>
+    </div>
+
+    <div class="rating-row">
+      <span class="star-label">4 star</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.fourStar"></div>
+      </div>
+      <span class="percentage">{{ reviewData.ratingBreakdown.fourStar }}%</span>
+    </div>
+
+    <div class="rating-row">
+      <span class="star-label">3 star</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.threeStar"></div>
+      </div>
+      <span class="percentage">{{ reviewData.ratingBreakdown.threeStar }}%</span>
+    </div>
+
+    <div class="rating-row">
+      <span class="star-label">2 star</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.twoStar"></div>
+      </div>
+      <span class="percentage">{{ reviewData.ratingBreakdown.twoStar }}%</span>
+    </div>
+
+    <div class="rating-row">
+      <span class="star-label">1 star</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.oneStar"></div>
+      </div>
+      <span class="percentage">{{ reviewData.ratingBreakdown.oneStar }}%</span>
+    </div>
+  </div>
+
+  <div class="see-reviews-link" *ngIf="asModal">
+    <a [routerLink]="['/reviews', productId]" class="text-decoration-none">See customer reviews ›</a>
+  </div>
+</div>

@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthenticationService } from '../../services/authentication.service';
 import { AlertService } from '../../shared/alert/alert.service';
 import { AppCookieService } from '../../services/cookie.service';
 import { SessionService } from '../../services/session.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ComponentCommunicationService } from '../../services/component-communication.service';
 import { CartService } from '../../services/cart.service';
 import { CartModel } from '../../models/cart.model';
@@ -13,7 +13,7 @@ import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -70,7 +70,6 @@ export class LoginComponent {
     this.isResetPassword = true;
   }
 
-
   Register() {
     this.modalService.openModal();
   }
@@ -86,7 +85,7 @@ export class LoginComponent {
       this.userService.sendEmail(this.receiverEmail).subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.alertService.showSuccess("email sended successfully");
+          this.alertService.showSuccess("email sent successfully");
         },
         error: (error) => {
           this.isLoading = false;
@@ -97,7 +96,6 @@ export class LoginComponent {
             this.alertService.showError(error.error.errorMessage);
           }
         }
-
       })
     }
   }
@@ -151,5 +149,9 @@ export class LoginComponent {
         }
       })
     }
+  }
+
+  backToLogin() {
+    this.isResetPassword = false
   }
 }

@@ -1,0 +1,132 @@
+.reviews-page-header {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.left-side {
+  padding: 20px;
+}
+
+.btn-link {
+  text-decoration: none !important;
+}
+
+.btn-link:hover i {
+  color: #007bff !important;
+}
+
+.reviews-content {
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+  padding: 10px 0;
+}
+
+.review-summary-sticky {
+  position: sticky;
+  top: 110px;
+}
+
+.review-summary-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
+.review-list-section {
+  background: transparent;
+}
+
+.review-summary-card ::ng-deep .customer-reviews-container {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  max-width: none;
+}
+
+@media (max-width: 991.98px) {
+  .reviews-content {
+    padding: 20px 0;
+  }
+
+  .review-summary-sticky {
+    position: static;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .reviews-content {
+    padding: 16px 0;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .reviews-page-header .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .reviews-page-header .d-flex {
+    padding: 15px 0;
+  }
+}
+
+.review-list-section {
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 transparent;
+}
+
+.review-list-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.review-list-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.review-list-section::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 3px;
+}
+
+.review-list-section::-webkit-scrollbar-thumb:hover {
+  background-color: #adb5bd;
+}
+
+.reviews-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

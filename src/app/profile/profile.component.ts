@@ -34,8 +34,6 @@ export class ProfileComponent {
   constructor(private userService: UserService, private sessionService: SessionService, private fb: FormBuilder,private alertService : AlertService) {
   }
 
-
-
   private createForm(): void {
     this.userProfileForm = this.fb.group({
       id : [this.currentUser?.id],
@@ -48,8 +46,6 @@ export class ProfileComponent {
       userFile: [null, [this.imageValidator]]
     });
   }
-
-
 
   ngOnInit() {
     this.userService.getCurrentUserDetails(this.sessionService.getUserId()).subscribe({

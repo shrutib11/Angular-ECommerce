@@ -1,12 +1,10 @@
 <div class="container">
-  <!-- Back Link -->
   <div class="back-link mt-5">
-    <a  routerLink="/products" class="text-decoration-none text-muted">
+    <a routerLink="/products" class="text-decoration-none text-muted">
       <i class="bi bi-arrow-left"></i> Back to Products
     </a>
   </div>
 
-  <!-- Product Section -->
   <div class="product-section row">
     <div class="product-image-col col-md-6 col-lg-6">
       <div class="image-wrapper">
@@ -25,6 +23,39 @@
 
       <h2 class="product-price">{{ product.price | indianCurrency }}</h2>
 
+      <div class="ratings-section mb-4">
+        <div class="rating-summary" (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false">
+
+          <div class="stars-container">
+            <span *ngFor="let filled of getStarArray()" class="star" [class.filled]="filled">
+              ★
+            </span>
+          </div>
+
+          <span class="rating-text">
+            {{ reviewData.averageRating.toFixed(1) }} out of 5
+            ({{ formatNumber(reviewData.totalReviews) }} reviews)
+          </span>
+
+          <i class="bi bi-chevron-down dropdown-arrow"></i>
+
+          <div class="rating-modal" [class.show]="showRatingModal" (mouseenter)="showRatingModal = true"
+            (mouseleave)="showRatingModal = false">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4>Customer Reviews</h4>
+                <button type="button" class="btn-close" (click)="showRatingModal = false">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+              <div class="modal-body">
+                <app-customer-reviews [reviewData]="reviewData" [productId]="product.id.toString()" [asModal]="true"></app-customer-reviews>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="description-section">
         <h6>Description</h6>
         <p class="description-text">
@@ -32,13 +63,8 @@
         </p>
       </div>
 
-      <div class="quantity-section">
-        <span class="quantity-label">Available Quantity:</span>
-        <div class="quantity-display">{{ product.stockQuantity }}</div>
-      </div>
-
       <div class="buttons-row">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="onAddToCart()">
           <i class="bi bi-cart"></i> Add to Cart
         </button>
         <button class="btn btn-secondary">

@@ -1,3 +1,8 @@
+.profile-background{
+  background-color: rgb(239, 239, 239);
+  min-height: 885px;
+}
+
 .profile-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -8,13 +13,12 @@
   width: 240px;
   height: 240px;
   border-radius: 50%;
-
   object-fit: cover;
   border: 3px solid #e9ecef;
 }
 
 .profile-left{
-  background: #f8f9fa;
+  background: white;
   border: 1px solid #e9ecef;
   border-radius: 12px;
 }
@@ -164,4 +168,9 @@
 .avatar-container {
   display: inline-block;
   position: relative;
+}
+
+.no-resize {
+  resize: none;
+  overflow: hidden; 
 }

@@ -1,0 +1,23 @@
+<div class="review-item">
+  <div class="review-header">
+    <div class="customer-info">
+      <div class="customer-initial">{{ review.customerInitial }}</div>
+      <span class="customer-name">{{ review.customerName }}</span>
+    </div>
+  </div>
+
+  <div class="review-rating">
+    <div class="stars">
+      <span *ngFor="let filled of getStarArray()"
+            class="star"
+            [class.filled]="filled">
+        ★
+      </span>
+    </div>
+    <span class="review-date">{{ formatDate(review.date) }}</span>
+  </div>
+
+  <div class="review-content">
+    <p class="review-text">{{ review.reviewText }}</p>
+  </div>
+</div>

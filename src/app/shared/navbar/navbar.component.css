@@ -1,3 +1,7 @@
+.main-content {
+  padding-top: 0;
+}
+
 .search-container {
   flex: 1;
   max-width: 500px;
@@ -19,7 +23,7 @@
 }
 
 .nav-link:hover {
-  color: #667eea !important;  
+  color: #667eea !important;
   transition: all 0.3s ease;
 }
 
@@ -33,4 +37,14 @@
   position: relative;
   border-bottom: 2px solid #667eea;
   transition: all 0.3s ease;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

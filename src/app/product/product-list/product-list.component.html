@@ -24,7 +24,6 @@
 
   </div>
 
-  <!-- Default header if no category selected -->
   <ng-template #defaultHeader>
     <h1>Our Products</h1>
     <p>Browse our collection or manage products as an admin.</p>
@@ -33,24 +32,19 @@
       <button class="btn btn-dark" routerLink="/categories">
         <i class="bi bi-tags"></i> Browse Categories
       </button>
-      <button class="btn btn-outline-secondary" (click)="openAddEditModal()">
+      <button class="btn btn-outline-secondary" (click)="openAddEditModal()" *ngIf="isAdmin">
         <i class="bi bi-plus-lg"></i> Add Product
       </button>
     </div>
   </ng-template>
 </div>
 
-
-<!-- Spinner while loading -->
 <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 300px;">
   <div class="spinner-border text-success" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>
 </div>
 
-
-
-<!-- Product grid when loaded -->
 <div *ngIf="!isLoading">
   <div class="card-container row">
     <app-product-card class="col-md-3 col-sm-6 mb-5"
@@ -60,7 +54,6 @@
   </div>
 </div>
 
-<!-- Product Add/Edit Modal -->
 <app-product-add-edit
   [showModal]="showAddEditModal"
   [product]="receivedProduct"

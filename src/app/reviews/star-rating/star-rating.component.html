@@ -1,0 +1,18 @@
+<div class="star-rating-container">
+  <div class="star-rating">
+    <span
+      *ngFor="let star of stars; let i = index"
+      class="star"
+      [class.filled]="i < (hoverRating || rating)"
+      [class.interactive]="interactive"
+      (click)="onStarClick(i + 1)"
+      (mouseenter)="onStarHover(i + 1)"
+      (mouseleave)="onStarLeave()"
+    >
+      ★
+    </span>
+  </div>
+  <div *ngIf="rating > 0" class="rating-text">
+    You rated this {{ rating }} out of 5 stars
+  </div>
+</div>

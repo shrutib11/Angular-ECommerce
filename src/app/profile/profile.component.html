@@ -1,267 +1,179 @@
-<div class="profile-container">
-  <div class="mb-4">
-    <h2 class="fw-bold mb-1">My Profile</h2>
-    <p class="text-muted">Manage your account information and preferences</p>
-  </div>
-
-  <div class="row">
-    <div
-      class="col-md-4 d-flex align-items-center justify-content-center profile-left"
-    >
-      <div>
-        <div class="profile-card">
-          <div class="avatar-container mb-3">
-            <img
-              *ngIf="imagePreview"
-              [src]="imagePreview"
-              alt="Profile Picture"
-              class="profile-avatar"
-            />
-            <img
-              *ngIf="!imagePreview && currentUser?.profileImage"
-              [src]="getUserImageUrl(this.currentUser?.profileImage!)"
-              alt="Profile Picture"
-              class="profile-avatar"
-            />
-            <img
-              *ngIf="!imagePreview && !currentUser?.profileImage"
-              src="http://localhost:7000/user-uploads/default.png"
-              alt="Default Profile Picture"
-              class="profile-avatar"
-            />
-            <div
-              class="camera-icon"
-              *ngIf="isEditing"
-              (click)="fileInput.click()"
-            >
-              <i class="bi bi-camera text-muted"></i>
-              <input
-                type="file"
-                accept="image/*"
-                #fileInput
-                c
-                (change)="onFileSelect($event)"
-                style="display: none"
-              />
-            </div>
-          </div>
-
-
-     <div class="invalid-feedback text-danger d-block  mb-3" *ngIf="userProfileForm.get('userFile')?.errors">
-      <small *ngIf="userProfileForm.get('userFile')?.errors?.['invalidExtension']">
-        Only JPG, JPEG, PNG, and WEBP image files are allowed.
-      </small>
-      <small *ngIf="userProfileForm.get('userFile')?.errors?.['maxSize']">
-        Image size must be less than or equal to 2MB.
-      </small>
+<div class="container-fluid profile-background">
+  <div class="profile-container">
+    <div class="mb-4">
+      <h2 class="fw-bold mb-1">My Profile</h2>
+      <p class="text-muted">Manage your account information and preferences</p>
     </div>
 
-          <h4 class="mb-2">
-            {{ this.currentUser?.firstName }} {{ this.currentUser?.lastName }}
-          </h4>
-          <p class="text-muted mb-3">{{ this.currentUser?.email }}</p>
-          <span class="verified-badge {{ currentUser?.role?.toLowerCase() }}-badge" >
-            {{ currentUser?.role }}
-          </span>
+    <div class="row">
+      <div class="col-md-4 d-flex align-items-center justify-content-center profile-left">
+        <div>
+          <div class="profile-card">
+            <div class="avatar-container mb-3">
+              <img *ngIf="imagePreview" [src]="imagePreview" alt="Profile Picture" class="profile-avatar" />
+              <img *ngIf="!imagePreview && currentUser?.profileImage"
+                [src]="getUserImageUrl(this.currentUser?.profileImage!)" alt="Profile Picture" class="profile-avatar" />
+              <img *ngIf="!imagePreview && !currentUser?.profileImage"
+                src="http://localhost:7000/user-uploads/default.png" alt="Default Profile Picture"
+                class="profile-avatar" />
+              <div class="camera-icon" *ngIf="isEditing" (click)="fileInput.click()">
+                <i class="bi bi-camera text-muted"></i>
+                <input type="file" accept="image/*" #fileInput c (change)="onFileSelect($event)"
+                  style="display: none" />
+              </div>
+            </div>
+
+            <div class="invalid-feedback text-danger d-block  mb-3" *ngIf="userProfileForm.get('userFile')?.errors">
+              <small *ngIf="userProfileForm.get('userFile')?.errors?.['invalidExtension']">
+                Only JPG, JPEG, PNG, and WEBP image files are allowed.
+              </small>
+              <small *ngIf="userProfileForm.get('userFile')?.errors?.['maxSize']">
+                Image size must be less than or equal to 2MB.
+              </small>
+            </div>
+
+            <h4 class="mb-2">
+              {{ this.currentUser?.firstName }} {{ this.currentUser?.lastName }}
+            </h4>
+            <p class="text-muted mb-3">{{ this.currentUser?.email }}</p>
+            <span class="verified-badge {{ currentUser?.role?.toLowerCase() }}-badge">
+              {{ currentUser?.role }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-8">
-      <div class="info-card pt-3 pb-3">
-        <form *ngIf="formReady" [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="section-title">
-            <i class="bi bi-person"></i>
-            Profile Information
-          </h5>
-          <div>
-            <button *ngIf="!isEditing" class="edit-btn" type="button" (click)="enableEdit()">
-              <i class="bi bi-pencil me-1"></i>
-              Edit
-            </button>
-            <div *ngIf="isEditing">
-              <button class="save-btn" type="submit">
-                <i class="bi bi-save me-1"></i>
-                <span class="fw-bolder">Save</span>
-              </button>
-              <button class="cancel-btn" type="button" (click)="cancelEdit()">
-                <i class="bi bi-x-lg me-1"></i>
-                <span class="fw-bolder">Cancel</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <i class="bi bi-person-badge text-muted me-2"></i>
-          <span class="text-muted">Personal Information</span>
-        </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">First Name</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="firstName"
-                [readonly]="!isEditing"
-                [class.form-control-editable]="isEditing"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="
-                  userProfileForm.get('firstName')?.invalid &&
-                  userProfileForm.get('firstName')?.touched">
-                <small
-                  class="mb-3 mt-3"
-                  *ngIf="userProfileForm.get('firstName')?.errors?.['required']"
-                  >Please provide First Name</small
-                >
-                <small
-                  class="mb-3 mt-3"
-                  *ngIf="userProfileForm.get('firstName')?.errors?.['maxLength']"
-                  >First Name should be maximum 50 characters long</small
-                >
+      <div class="col-md-8">
+        <div class="info-card pt-3 pb-3">
+          <form *ngIf="formReady" [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="section-title">
+                <i class="bi bi-person"></i>
+                Profile Information
+              </h5>
+              <div>
+                <button *ngIf="!isEditing" class="edit-btn" type="button" (click)="enableEdit()">
+                  <i class="bi bi-pencil me-1"></i>
+                  Edit
+                </button>
+                <div *ngIf="isEditing">
+                  <button class="save-btn" type="submit">
+                    <i class="bi bi-save me-1"></i>
+                    <span class="fw-bolder">Save</span>
+                  </button>
+                  <button class="cancel-btn" type="button" (click)="cancelEdit()">
+                    <i class="bi bi-x-lg me-1"></i>
+                    <span class="fw-bolder">Cancel</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Last Name</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="lastName"
-                [readonly]="!isEditing"
-                [class.form-control-editable]="isEditing"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="
-                  userProfileForm.get('lastName')?.invalid &&
-                  userProfileForm.get('lastName')?.touched
-                "
-              >
-                <small
-                  class="mb-3 mt-3"
-                  *ngIf="userProfileForm.get('lastName')?.errors?.['required']"
-                  >Please provide Last Name</small
-                >
-                <small
-                  class="mb-3 mt-3"
-                  *ngIf="userProfileForm.get('lastName')?.errors?.['maxLength']"
-                  >Last Name should be maximum 50 characters long</small
-                >
+
+            <div class="mb-3">
+              <i class="bi bi-person-badge text-muted me-2"></i>
+              <span class="text-muted">Personal Information</span>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" formControlName="firstName" [readonly]="!isEditing"
+                  [class.form-control-editable]="isEditing" />
+                <div class="invalid-feedback" *ngIf="
+                    userProfileForm.get('firstName')?.invalid &&
+                    userProfileForm.get('firstName')?.touched">
+                  <small class="mb-3 mt-3" *ngIf="userProfileForm.get('firstName')?.errors?.['required']">Please provide
+                    First Name</small>
+                  <small class="mb-3 mt-3" *ngIf="userProfileForm.get('firstName')?.errors?.['maxLength']">First Name
+                    should be maximum 50 characters long</small>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" formControlName="lastName" [readonly]="!isEditing"
+                  [class.form-control-editable]="isEditing" />
+                <div class="invalid-feedback" *ngIf="
+                    userProfileForm.get('lastName')?.invalid &&
+                    userProfileForm.get('lastName')?.touched
+                  ">
+                  <small class="mb-3 mt-3" *ngIf="userProfileForm.get('lastName')?.errors?.['required']">Please provide
+                    Last Name</small>
+                  <small class="mb-3 mt-3" *ngIf="userProfileForm.get('lastName')?.errors?.['maxLength']">Last Name
+                    should be maximum 50 characters long</small>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="mb-3">
-            <i class="bi bi-envelope text-muted me-2"></i>
-            <span class="text-muted">Contact Information</span>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Email Address</label>
-            <input
-              type="email"
-              class="form-control"
-              formControlName="email"
-              [readonly]="true"
-              [class.form-control-editable]="false"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="
-                userProfileForm.get('email')?.invalid &&
-                userProfileForm.get('email')?.touched
-              "
-            >
-              <small
-                class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('email')?.errors?.['required']"
-                >Please provide email address</small
-              >
-              <small
-                class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('email')?.errors?.['email']"
-                >Please provide a valid email address</small
-              >
+            <div class="mb-3">
+              <i class="bi bi-envelope text-muted me-2"></i>
+              <span class="text-muted">Contact Information</span>
             </div>
-          </div>
 
-          <div class="mb-3">
-            <i class="bi bi-telephone text-muted me-2"></i>
-            <span class="text-muted">Phone Number</span>
-          </div>
-
-          <div class="mb-3">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="phoneNumber"
-              [readonly]="!isEditing"
-              [class.form-control-editable]="isEditing"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="
-                userProfileForm.get('phoneNumber')?.invalid &&
-                userProfileForm.get('phoneNumber')?.touched
-              "
-            >
-              <small
-                class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('phoneNumber')?.errors?.['required']"
-                >Please provide Phone Number</small
-              >
-              <small
-                class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('phoneNumber')?.errors?.['pattern']"
-                >Please provide a valid Phone Number (Ex. +911234567890) </small
-              >
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" formControlName="email" [readonly]="true"
+                [class.form-control-editable]="false" />
+              <div class="invalid-feedback" *ngIf="
+                  userProfileForm.get('email')?.invalid &&
+                  userProfileForm.get('email')?.touched
+                ">
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('email')?.errors?.['required']">Please provide email
+                  address</small>
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('email')?.errors?.['email']">Please provide a valid
+                  email address</small>
+              </div>
             </div>
-          </div>
 
-          <div class="mb-3">
-            <i class="bi bi-geo-alt text-muted me-2"></i>
-            <span class="text-muted">Address Information</span>
-          </div>
+            <div class="mb-3">
+              <i class="bi bi-telephone text-muted me-2"></i>
+              <span class="text-muted">Phone Number</span>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Address</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="address"
-              [readonly]="!isEditing"
-              [class.form-control-editable]="isEditing"
-            />
-            <div class="invalid-feedback" *ngIf="userProfileForm.get('address')?.invalid && userProfileForm.get('address')?.touched">
-              <small class="mb-3 mt-3" *ngIf="userProfileForm.get('address')?.errors?.['required']" >Please provide address</small
-              >
-              <small class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('address')?.errors?.['maxLength']">Maximum length for address is 200 characters</small
-              >
+            <div class="mb-3">
+              <input type="tel" class="form-control" formControlName="phoneNumber" [readonly]="!isEditing"
+                [class.form-control-editable]="isEditing" />
+              <div class="invalid-feedback" *ngIf="
+                  userProfileForm.get('phoneNumber')?.invalid &&
+                  userProfileForm.get('phoneNumber')?.touched
+                ">
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('phoneNumber')?.errors?.['required']">Please provide
+                  Phone Number</small>
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('phoneNumber')?.errors?.['pattern']">Please provide
+                  a valid Phone Number (Ex. +911234567890) </small>
+              </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">PIN Code</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="pinCode"
-              [readonly]="!isEditing"
-              [class.form-control-editable]="isEditing"
-            />
-            <div class="invalid-feedback" *ngIf="userProfileForm.get('pinCode')?.invalid && userProfileForm.get('pinCode')?.touched">
-              <small class="mb-3 mt-3" *ngIf="userProfileForm.get('pinCode')?.errors?.['required']" >Please provide pincode</small
-              >
-              <small class="mb-3 mt-3"
-                *ngIf="userProfileForm.get('pinCode')?.errors?.['pattern']">Please provide a valid pincode (It should contain exactly 6 numbers)</small
-              >
+
+            <div class="mb-3">
+              <i class="bi bi-geo-alt text-muted me-2"></i>
+              <span class="text-muted">Address Information</span>
             </div>
-          </div>
-        </form>
+
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <textarea class="form-control" formControlName="address" [readonly]="!isEditing"
+                [class.form-control-editable]="isEditing" [class.no-resize]="!isEditing"></textarea>
+              <div class="invalid-feedback"
+                *ngIf="userProfileForm.get('address')?.invalid && userProfileForm.get('address')?.touched">
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('address')?.errors?.['required']">Please provide
+                  address</small>
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('address')?.errors?.['maxLength']">Maximum length
+                  for address is 200 characters</small>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">PIN Code</label>
+              <input type="text" class="form-control" formControlName="pinCode" [readonly]="!isEditing"
+                [class.form-control-editable]="isEditing" />
+              <div class="invalid-feedback"
+                *ngIf="userProfileForm.get('pinCode')?.invalid && userProfileForm.get('pinCode')?.touched">
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('pinCode')?.errors?.['required']">Please provide
+                  pincode</small>
+                <small class="mb-3 mt-3" *ngIf="userProfileForm.get('pinCode')?.errors?.['pattern']">Please provide a
+                  valid pincode (It should contain exactly 6 numbers)</small>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
