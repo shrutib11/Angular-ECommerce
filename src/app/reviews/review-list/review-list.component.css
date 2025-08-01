@@ -1,0 +1,143 @@
+/* review-list.component.css */
+.review-list-container {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.review-controls {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-controls {
+  margin-bottom: 16px;
+}
+
+.control-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.btn-group .btn {
+  border-color: #dee2e6;
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.btn-group .btn.active {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.sort-controls {
+  width: 200px;
+}
+
+.form-select-sm {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.results-info {
+  margin-bottom: 16px;
+}
+
+.results-info p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.reviews-list {
+  min-height: 400px;
+}
+
+.no-reviews {
+  background: white;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.no-reviews i {
+  font-size: 4rem;
+}
+
+.pagination-container {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pagination .page-link {
+  color: #007bff;
+  border-color: #dee2e6;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.pagination .page-link:hover {
+  background-color: #e7f1ff;
+  border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .review-list-container {
+    padding: 16px;
+  }
+
+  .review-controls {
+    padding: 16px;
+  }
+
+  .filter-controls {
+    margin-bottom: 12px;
+  }
+
+  .btn-group {
+    flex-wrap: wrap;
+  }
+
+  .btn-group .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+  }
+
+  .sort-controls {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination .page-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .results-info p {
+    font-size: 13px;
+  }
+}

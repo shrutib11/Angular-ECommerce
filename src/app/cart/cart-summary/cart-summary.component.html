@@ -3,7 +3,7 @@
 
   <div class="summary-row">
     <span class="summary-label">Subtotal ({{ items.length }} items)</span>
-    <span class="summary-value">&#8377;{{ subtotal }}</span>
+    <span class="summary-value">{{ subtotal | indianCurrency }}</span>
   </div>
 
   <div class="summary-row">
@@ -18,7 +18,7 @@
 
   <div class="summary-row">
     <span class="summary-label">Tax</span>
-    <span class="summary-value">&#8377;{{ tax }}</span>
+    <span class="summary-value">{{ tax | indianCurrency }}</span>
   </div>
 
   <div class="summary-row">
@@ -29,7 +29,7 @@
   <div class="summary-total">
     <div class="total-row">
       <span>Total</span>
-      <span>&#8377;{{ total }}</span>
+      <span>{{ total | indianCurrency }}</span>
     </div>
   </div>
 

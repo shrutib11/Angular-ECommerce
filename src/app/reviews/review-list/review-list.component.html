@@ -1,0 +1,107 @@
+<div class="review-list-container">
+  <div class="review-controls">
+    <div class="filter-controls">
+      <h6 class="control-label">Filter by Rating:</h6>
+      <div class="btn-group" role="group">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === 'all'"
+                (click)="filterByRating('all')">
+          All
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === '5'"
+                (click)="filterByRating('5')">
+          5★
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === '4'"
+                (click)="filterByRating('4')">
+          4★
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === '3'"
+                (click)="filterByRating('3')">
+          3★
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === '2'"
+                (click)="filterByRating('2')">
+          2★
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [class.active]="selectedRating === '1'"
+                (click)="filterByRating('1')">
+          1★
+        </button>
+      </div>
+    </div>
+
+    <div class="sort-controls">
+      <h6 class="control-label">Sort by:</h6>
+      <select class="form-select form-select-sm"
+              [(ngModel)]="sortBy"
+              (ngModelChange)="sortReviews($event)">
+        <option value="recent">Most Recent</option>
+        <option value="oldest">Oldest First</option>
+        <option value="highest">Highest Rating</option>
+        <option value="lowest">Lowest Rating</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <p class="text-muted">
+      Showing {{ getPaginatedReviews().length }} of {{ filteredReviews.length }} reviews
+    </p>
+  </div>
+
+  <div class="reviews-list">
+    <app-review-item
+      *ngFor="let review of getPaginatedReviews()"
+      [review]="review">
+    </app-review-item>
+
+    <div *ngIf="filteredReviews.length === 0" class="no-reviews">
+      <div class="text-center py-5">
+        <i class="bi bi-chat-square-text display-1 text-muted mb-3"></i>
+        <h5 class="text-muted">No reviews found</h5>
+        <p class="text-muted">Try adjusting your filters to see more reviews.</p>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="pagination-container" *ngIf="getTotalPages() > 1">
+    <nav aria-label="Reviews pagination">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link"
+                  (click)="changePage(currentPage - 1)"
+                  [disabled]="currentPage === 1">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+        </li>
+
+        <li *ngFor="let page of getPageNumbers()"
+            class="page-item"
+            [class.active]="page === currentPage">
+          <button class="page-link" (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+          <button class="page-link"
+                  (click)="changePage(currentPage + 1)"
+                  [disabled]="currentPage === getTotalPages()">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div> -->
+</div>

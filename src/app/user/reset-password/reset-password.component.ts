@@ -21,20 +21,20 @@ export class ResetPasswordComponent {
   ngOnInit() {
     this.communicationService.hideNavbar();
     this.resetPassForm = new FormGroup({
-      newPassword: new FormControl('', [Validators.required, Validators.required,
+      newPassword: new FormControl('', [
+        Validators.required,
         Validators.minLength(8),
         Validators.maxLength(15),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)]),
-
-      confirmPassword: new FormControl('', [Validators.required, Validators.required,
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)
+      ]),
+      confirmPassword: new FormControl('', [
+        Validators.required,
         Validators.minLength(8),
         Validators.maxLength(15),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)])
-    }),
-    { validators: passwordMatchValidator };
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)
+      ])
+    }, { validators: passwordMatchValidator }); 
   }
-
-
 
   resetPassword(){
     if(this.resetPassForm.valid){
@@ -58,7 +58,6 @@ export class ResetPasswordComponent {
 
     }
   }
-
 }
 
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): { [key: string]: boolean } | null => {

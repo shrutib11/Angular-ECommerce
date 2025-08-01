@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, take, tap, throwError } from 'rxjs';
 import { CartItem } from '../models/cart-item.model';
 import { HttpClient } from '@angular/common/http';
 import { CartModel } from '../models/cart.model';
 import { ApiResponse } from '../models/api-response.model';
 import { SessionService } from './session.service';
 import Hashids from 'hashids';
+import { Product } from '../models/product.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +23,7 @@ export class CartService {
   public cartItems$ = this.cartItemsSubject.asObservable();
   private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient,private sessionService : SessionService) {
+  constructor(private http: HttpClient,private sessionService : SessionService, private router : Router) {
     this.hashids = new Hashids(environment.secretSalt, 8);
   }
 
@@ -45,6 +47,7 @@ export class CartService {
     formData.append('UserId',cart.userId.toString());
     return this.http.post<ApiResponse<CartModel>>(`${this.baseUrl}/createcart`,formData);
   }
+
   getCartItems(): Observable<CartItem[]> {
 
     return this.http.get<any>(`${this.baseUrl}/GetAll/${ this.sessionService.getCartId() }`).pipe(
@@ -88,8 +91,29 @@ export class CartService {
     );
   }
 
-  // Private method to update cart count
   private updateCartCount(count: number): void {
     this.cartCountSubject.next(count);
   }
+
+  addOrUpdateCartItem(product: Product, isLoggedIn: boolean): Observable<void> {
+    if (!isLoggedIn) {
+      this.router.navigate(['/login']);
+      return throwError(() => new Error('Not logged in'));
+    }
+
+    return this.cartItems$.pipe(
+      take(1),
+      switchMap((items) => {
+        const existingItem = items.find(item => item.productId === product.id);
+        const newQuantity = existingItem ? (existingItem.quantity ?? 0) + 1 : 1;
+
+        const request$ = existingItem
+          ? this.updateItemQuantity(existingItem.id, newQuantity)
+          : this.addToCart(product.id, 1, product.price);
+
+        return request$;
+      })
+    );
+  }
+
 }

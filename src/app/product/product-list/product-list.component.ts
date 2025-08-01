@@ -12,6 +12,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AlertService } from '../../shared/alert/alert.service';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
 import { HashidsService } from '../../services/hashids.service';
+import { ComponentCommunicationService } from '../../services/component-communication.service';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-product-list',
@@ -21,7 +23,8 @@ import { HashidsService } from '../../services/hashids.service';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-
+  isAdmin: boolean = false;
+  isLoggedIn: boolean = false;
   isLoading = true;
   products: Product[] = [];
   receivedCategory: Category | null = null;
@@ -39,7 +42,9 @@ export class ProductListComponent implements OnInit {
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     private alertService: AlertService,
-    private hashidsService: HashidsService
+    private hashidsService: HashidsService,
+    private communicationService: ComponentCommunicationService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit(): void {
@@ -59,9 +64,19 @@ export class ProductListComponent implements OnInit {
       if (searchTerm && searchTerm.trim()) {
         this.fetchAllProducts(searchTerm.trim());
       } else {
-        this.fetchAllProducts(); 
+        this.fetchAllProducts();
       }
     });
+
+    this.communicationService.isAdmin$.subscribe(show => {
+      this.isAdmin = show
+    })
+    if (this.sessionService.getUserId() != 0) {
+      this.isLoggedIn = true
+    }
+    if (this.sessionService.getUserRole().toLocaleLowerCase() == 'admin') {
+      this.isAdmin = true;
+    }
   }
 
   fetchCategoryDetails(categoryId: number): void {

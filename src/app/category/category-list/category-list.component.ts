@@ -7,10 +7,13 @@ import { CategoryAddEditComponent } from '../category-add-edit/category-add-edit
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
 import { AlertService } from '../../shared/alert/alert.service';
+import { RouterModule } from '@angular/router';
+import { SessionService } from '../../services/session.service';
+import { ComponentCommunicationService } from '../../services/component-communication.service';
 
 @Component({
   selector: 'app-category-list',
-  imports: [CategoryCardComponent, CommonModule, CategoryAddEditComponent, ReactiveFormsModule, DeleteConfirmationComponent],
+  imports: [CategoryCardComponent, CommonModule, CategoryAddEditComponent, ReactiveFormsModule, DeleteConfirmationComponent, RouterModule],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.css'
 })
@@ -19,16 +22,32 @@ export class CategoryListComponent implements OnInit {
   showAddModal: boolean = false;
   categories: Category[] = [];
   editCategory: Category | null = null;
+  isLoggedIn: boolean = false;
+  isAdmin: boolean = false;
 
   //Delete Modal Properties
   showDeleteModal = false;
   categoryToDelete: { id: string, name: string } | null = null;
   isDeleting = false;
 
-  constructor(private categoryService: CategoryService, private alertService: AlertService) { }
+  constructor(
+    private categoryService: CategoryService,
+    private alertService: AlertService,
+    private sessionService: SessionService,
+    private communicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     this.loadCategories();
+
+    this.communicationService.isAdmin$.subscribe(show => {
+      this.isAdmin = show
+    })
+    if (this.sessionService.getUserId() != 0) {
+      this.isLoggedIn = true
+    }
+    if (this.sessionService.getUserRole().toLocaleLowerCase() == 'admin') {
+      this.isAdmin = true;
+    }
   }
 
   loadCategories(): void {

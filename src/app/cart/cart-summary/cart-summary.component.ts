@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CartItem } from '../../models/cart-item.model';
 import { CommonModule } from '@angular/common';
+import { IndianCurrencyPipe } from '../../shared/pipes/indian-currency.pipe';
 
 @Component({
   selector: 'app-cart-summary',
-  imports: [CommonModule],
+  imports: [CommonModule, IndianCurrencyPipe],
   templateUrl: './cart-summary.component.html',
   styleUrl: './cart-summary.component.css'
 })

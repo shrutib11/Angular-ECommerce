@@ -117,28 +117,6 @@
   margin: 0;
 }
 
-.quantity-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.quantity-label {
-  font-weight: 600;
-  color: #212529;
-}
-
-.quantity-display {
-  background: white;
-  border: 2px solid #dee2e6;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  color: #495057;
-  min-width: 80px;
-  text-align: center;
-}
-
 .buttons-row {
   display: flex;
   gap: 1rem;
@@ -192,4 +170,134 @@
 
 .btn i {
   font-size: 1rem;
+}
+
+.ratings-section {
+  position: relative;
+}
+
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  position: relative;
+}
+
+.stars-container {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 20px;
+  color: #e0e0e0;
+  transition: color 0.2s ease;
+}
+
+.star.filled {
+  color: #ffc107;
+}
+
+.rating-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.rating-summary:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.rating-modal {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  background: rgb(239, 239, 239);
+  min-width: 400px;
+}
+
+.rating-modal.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px 0;
+  border-bottom: none;
+  background-color: rgb(239, 239, 239);
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .rating-modal {
+    min-width: 300px;
+    left: -50px;
+  }
+}
+
+@media (max-width: 576px) {
+  .rating-modal {
+    min-width: 280px;
+    left: -100px;
+  }
+
+  .stars-container .star {
+    font-size: 18px;
+  }
+
+  .rating-text {
+    font-size: 13px;
+  }
 }

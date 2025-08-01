@@ -46,25 +46,6 @@ export class AlertService {
     });
   }
 
-  async showConfirm(options: {
-    title: string,
-    text?: string,
-    confirmButtonText?: string,
-    cancelButtonText?: string
-  }): Promise<boolean> {
-    const result = await Swal.fire({
-      title: options.title,
-      text: options.text || '',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: options.confirmButtonText || 'Yes, delete it!',
-      cancelButtonText: options.cancelButtonText || 'Cancel'
-    });
-    return result.isConfirmed;
-  }
-
   showWarning(message: string) {
     Swal.fire({
       toast: true,
@@ -81,4 +62,23 @@ export class AlertService {
       timerProgressBar: true
     });
   }
+
+  // async showConfirm(options: {
+  //   title: string,
+  //   text?: string,
+  //   confirmButtonText?: string,
+  //   cancelButtonText?: string
+  // }): Promise<boolean> {
+  //   const result = await Swal.fire({
+  //     title: options.title,
+  //     text: options.text || '',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#dc3545',
+  //     cancelButtonColor: '#6c757d',
+  //     confirmButtonText: options.confirmButtonText || 'Yes, delete it!',
+  //     cancelButtonText: options.cancelButtonText || 'Cancel'
+  //   });
+  //   return result.isConfirmed;
+  // }
 }

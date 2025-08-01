@@ -60,7 +60,6 @@ export class SessionService {
   }
 
   setCartId(cartId: number): void {
-    console.log("Huirhetughoru")
     const session = this.getSession();
     session.cartId = cartId;
     this.saveSession(session);

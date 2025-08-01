@@ -1,0 +1,33 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onOverlayClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <button
+        class="close-button"
+        (click)="onClose()"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="success-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+
+      <h2 class="thank-you-title">Thank You!</h2>
+      <p class="thank-you-message">
+        Your review has been submitted successfully. We appreciate your feedback!
+      </p>
+
+      <button
+        class="continue-button"
+        (click)="onContinueShopping()"
+      >
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+</div>
