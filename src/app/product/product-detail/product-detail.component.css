@@ -272,6 +272,25 @@
   justify-content: center;
 }
 
+.rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffc107;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.star-icon {
+  margin-right: 4px;
+  font-size: 1.2rem; 
+}
+
+.stars {
+  font-size: 1.1rem;
+}
+
 .btn-close:hover {
   color: #333;
 }

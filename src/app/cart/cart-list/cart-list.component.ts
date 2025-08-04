@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CartItem } from '../../models/cart-item.model';
 import { CommonModule } from '@angular/common';
 import { DeleteConfirmationComponent } from '../../shared/delete-confirmation/delete-confirmation.component';
@@ -11,6 +11,7 @@ import { WriteReviewComponent } from '../../reviews/write-review/write-review.co
 import { Review } from '../../models/reviewData.model';
 import { Router } from '@angular/router';
 import { ReviewService } from '../../services/review.service';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-cart-list',
@@ -19,7 +20,7 @@ import { ReviewService } from '../../services/review.service';
   styleUrl: './cart-list.component.css'
 })
 
-export class CartListComponent {
+export class CartListComponent implements OnInit{
   @Input() items: CartItem[] = [];
   @Output() quantityUpdate = new EventEmitter<CartItem>();
   @Output() removeItem = new EventEmitter<number>();
@@ -35,8 +36,13 @@ export class CartListComponent {
     private cartService : CartService,
     private alertService : AlertService,
     private router : Router,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private sessionService: SessionService
   ) {}
+
+  ngOnInit(): void {
+    this.currentUserId = this.sessionService.getUserId().toString();
+  }
 
   getCartImageUrl(path: string): string {
       const fileName = path.split('/').pop();

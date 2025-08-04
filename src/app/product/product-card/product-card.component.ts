@@ -9,10 +9,11 @@ import { SessionService } from '../../services/session.service';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
 import Hashids from 'hashids';
+import { StarRatingPipe } from '../../shared/pipes/star-rating.pipe';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterModule, CommonModule, IndianCurrencyPipe],
+  imports: [RouterModule, CommonModule, IndianCurrencyPipe, StarRatingPipe],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })

@@ -7,4 +7,6 @@ export interface Product {
   categoryId: number;
   productImageFile: any;
   productImage: string;
+  avgRating: number;
+  totalReviews: number;
 }
