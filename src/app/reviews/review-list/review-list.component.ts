@@ -3,6 +3,7 @@ import { ReviewItem } from '../../models/review-item.model';
 import { ReviewItemComponent } from '../review-item/review-item.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Rating } from '../../models/reviewData.model';
 
 @Component({
   selector: 'app-review-list',
@@ -11,13 +12,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './review-list.component.css'
 })
 export class ReviewListComponent {
-  @Input() reviews: ReviewItem[] = [];
+  @Input() reviews: Rating[] = [];
 
-  filteredReviews: ReviewItem[] = [];
+  filteredReviews: Rating[] = [];
   selectedRating = 'all';
   sortBy = 'recent';
   currentPage = 1;
   itemsPerPage = 10;
+
+  ngOnChanges(): void {
+    if (this.reviews && this.reviews.length > 0) {
+      this.filteredReviews = [...this.reviews];
+      this.filterByRating(this.selectedRating);
+    }
+  }
 
   ngOnInit(): void {
     this.filteredReviews = [...this.reviews];
@@ -32,7 +40,7 @@ export class ReviewListComponent {
     } else {
       const ratingNumber = parseInt(rating);
       this.filteredReviews = this.reviews.filter(review =>
-        Math.floor(review.rating) === ratingNumber
+        Math.floor(review.ratingValue) === ratingNumber
       );
     }
 
@@ -47,25 +55,29 @@ export class ReviewListComponent {
   private applySorting(): void {
     switch (this.sortBy) {
       case 'recent':
-        this.filteredReviews.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+        this.filteredReviews.sort((a, b) => {
+          const dateA = new Date(a.reviewDate || 0).getTime();
+          const dateB = new Date(b.reviewDate || 0).getTime();
+          return dateB - dateA;
+        });
         break;
       case 'oldest':
-        this.filteredReviews.sort((a, b) =>
-          new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
+        this.filteredReviews.sort((a, b) => {
+          const dateA = new Date(a.reviewDate || 0).getTime();
+          const dateB = new Date(b.reviewDate || 0).getTime();
+          return dateA - dateB;
+        });
         break;
       case 'highest':
-        this.filteredReviews.sort((a, b) => b.rating - a.rating);
+        this.filteredReviews.sort((a, b) => b.ratingValue - a.ratingValue);
         break;
       case 'lowest':
-        this.filteredReviews.sort((a, b) => a.rating - b.rating);
+        this.filteredReviews.sort((a, b) => a.ratingValue - b.ratingValue);
         break;
     }
   }
 
-  getPaginatedReviews(): ReviewItem[] {
+  getPaginatedReviews(): Rating[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.filteredReviews.slice(startIndex, endIndex);

@@ -9,7 +9,7 @@
   </div>
 
   <div class="average-rating">
-    <span class="rating-number">{{ reviewData.averageRating.toFixed(1) }}</span>
+    <span class="rating-number">{{ reviewData.avgRating.toFixed(1) }}</span>
     <span class="rating-text">out of 5</span>
   </div>
 
@@ -21,45 +21,45 @@
     <div class="rating-row">
       <span class="star-label">5 star</span>
       <div class="progress-bar-container">
-        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.fiveStar"></div>
+        <div class="progress-bar" [style.width.%]="reviewData.ratingDistribution[5]"></div>
       </div>
-      <span class="percentage">{{ reviewData.ratingBreakdown.fiveStar }}%</span>
+      <span class="percentage">{{ reviewData.ratingDistribution[5] }}%</span>
     </div>
 
     <div class="rating-row">
       <span class="star-label">4 star</span>
       <div class="progress-bar-container">
-        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.fourStar"></div>
+        <div class="progress-bar" [style.width.%]="reviewData.ratingDistribution[4]"></div>
       </div>
-      <span class="percentage">{{ reviewData.ratingBreakdown.fourStar }}%</span>
+      <span class="percentage">{{ reviewData.ratingDistribution[4] }}%</span>
     </div>
 
     <div class="rating-row">
       <span class="star-label">3 star</span>
       <div class="progress-bar-container">
-        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.threeStar"></div>
+        <div class="progress-bar" [style.width.%]="reviewData.ratingDistribution[3]"></div>
       </div>
-      <span class="percentage">{{ reviewData.ratingBreakdown.threeStar }}%</span>
+      <span class="percentage">{{ reviewData.ratingDistribution[3] }}%</span>
     </div>
 
     <div class="rating-row">
       <span class="star-label">2 star</span>
       <div class="progress-bar-container">
-        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.twoStar"></div>
+        <div class="progress-bar" [style.width.%]="reviewData.ratingDistribution[2]"></div>
       </div>
-      <span class="percentage">{{ reviewData.ratingBreakdown.twoStar }}%</span>
+      <span class="percentage">{{ reviewData.ratingDistribution[2] }}%</span>
     </div>
 
     <div class="rating-row">
       <span class="star-label">1 star</span>
       <div class="progress-bar-container">
-        <div class="progress-bar" [style.width.%]="reviewData.ratingBreakdown.oneStar"></div>
+        <div class="progress-bar" [style.width.%]="reviewData.ratingDistribution[1]"></div>
       </div>
-      <span class="percentage">{{ reviewData.ratingBreakdown.oneStar }}%</span>
+      <span class="percentage">{{ reviewData.ratingDistribution[1] }}%</span>
     </div>
   </div>
 
   <div class="see-reviews-link" *ngIf="asModal">
-    <a [routerLink]="['/reviews', productId]" class="text-decoration-none">See customer reviews ›</a>
+    <a (click)="goToReviewPage()" class="text-decoration-none">See customer reviews ›</a>
   </div>
 </div>

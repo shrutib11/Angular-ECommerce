@@ -15,8 +15,16 @@
     <h5>{{ product.name }}</h5>
 
     <div class="rating">
-      <span class="stars">★★★★☆</span>
-      <span class="rating-text">4.4 (203)</span>
+      <span class="stars">
+        <ng-container *ngFor="let star of product.avgRating | starRating">
+          <i [ngClass]="{
+            'bi bi-star-fill': star === 'full',
+            'fas fa-star-half-stroke': star === 'half',
+            'far fa-star': star === 'empty'
+          }"></i>
+        </ng-container>
+      </span>
+      <span class="rating-text">{{ product.avgRating }} ({{ product.totalReviews }})</span>
     </div>
 
     <p class="price">{{ product.price | indianCurrency  }}</p>

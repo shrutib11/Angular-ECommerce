@@ -9,14 +9,17 @@ import { CommonModule } from '@angular/common';
 import { IndianCurrencyPipe } from '../../shared/pipes/indian-currency.pipe';
 import { AlertService } from '../../shared/alert/alert.service';
 import { HashidsService } from '../../services/hashids.service';
-import { ReviewData } from '../../models/reviewData.model';
+import { ProductRating } from '../../models/reviewData.model';
 import { CustomerReviewsComponent } from '../../reviews/customer-reviews/customer-reviews.component';
 import { CartService } from '../../services/cart.service';
 import { SessionService } from '../../services/session.service';
+import { StarRatingPipe } from '../../shared/pipes/star-rating.pipe';
+import { catchError, forkJoin, of, switchMap } from 'rxjs';
+import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule, RouterModule, IndianCurrencyPipe, CustomerReviewsComponent],
+  imports: [CommonModule, RouterModule, IndianCurrencyPipe, CustomerReviewsComponent, StarRatingPipe],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
@@ -27,15 +30,22 @@ export class ProductDetailComponent implements OnInit {
   isLoggedIn: boolean = false;
   isAddingToCart = false;
   showRatingModal = false;
-  reviewData: ReviewData = {
-    averageRating: 4.0,
-    totalReviews: 16281,
-    ratingBreakdown: {
-      fiveStar: 50,
-      fourStar: 22,
-      threeStar: 14,
-      twoStar: 5,
-      oneStar: 9
+
+  // productRating: ProductRating = {
+  //   avgRating: 0,
+  //   totalReviews: 0,
+  //   ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  // };
+
+  reviewData: ProductRating = {
+    avgRating: 0.0,
+    totalReviews: 0,
+    ratingDistribution: {
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0
     }
   };
 
@@ -46,7 +56,8 @@ export class ProductDetailComponent implements OnInit {
     private categoryService: CategoryService,
     private alertService: AlertService,
     private cartService: CartService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private reviewService: ReviewService
   ) { }
 
   ngOnInit(): void {
@@ -58,13 +69,30 @@ export class ProductDetailComponent implements OnInit {
     }
 
     if (productId) {
-      this.productService.getProductById(+productId).subscribe({
-        next: (response) => {
-          this.product = response.result;
+      this.isLoading = true;
+
+      this.productService.getProductById(+productId).pipe(
+        switchMap(productResponse => {
+          this.product = productResponse.result;
+          return this.reviewService.getRatingByProduct(+productId).pipe(
+            catchError(err => {
+              if (err?.status === 404) {
+                this.reviewData = this.reviewData;
+              }
+              return of(null);
+            })
+          );
+        })
+      ).subscribe({
+        next: (ratingResponse) => {
+          if (ratingResponse) {
+            this.reviewData = ratingResponse;
+          }
           this.isLoading = false;
           this.fetchCategory(this.product.categoryId.toString());
         },
         error: (err) => {
+          console.error("Product fetch failed:", err);
           this.isLoading = false;
           this.alertService.showError('Failed to load product details. Please try again later.');
         }
@@ -93,7 +121,7 @@ export class ProductDetailComponent implements OnInit {
 
   getStarArray(): boolean[] {
     const stars = [];
-    const fullStars = Math.floor(this.reviewData.averageRating);
+    const fullStars = Math.floor(this.reviewData.avgRating);
 
     for (let i = 0; i < 5; i++) {
       stars.push(i < fullStars);

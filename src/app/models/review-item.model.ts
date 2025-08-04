@@ -1,9 +1,7 @@
 export interface ReviewItem {
   id: string;
-  customerName: string;
-  customerInitial: string;
+  reviewerName: string;
   rating: number;
-  date: string;
-  reviewText: string;
-  verified?: boolean;
+  reviewDate: string;
+  comment: string;
 }

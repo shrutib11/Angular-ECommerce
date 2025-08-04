@@ -45,9 +45,10 @@
   (cancelled)="onDeleteCancelled()">
 </app-delete-confirmation>
 
+<!-- Change orderid -->
 <app-write-review
   [isOpen]="showWriteReview"
-  [productId]="selectedReviewItem?.id"
+  [productId]="selectedReviewItem?.productId"
   [orderId]="selectedReviewItem?.id"
   [productName]="selectedReviewItem?.name"
   [userId]="currentUserId"

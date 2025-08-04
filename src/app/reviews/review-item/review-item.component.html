@@ -1,8 +1,19 @@
 <div class="review-item">
   <div class="review-header">
     <div class="customer-info">
-      <div class="customer-initial">{{ review.customerInitial }}</div>
-      <span class="customer-name">{{ review.customerName }}</span>
+      <div class="customer-avatar">
+        <ng-container *ngIf="hasUserProfile(); else showInitial">
+          <img
+            [src]="getUserImageUrl(review.userProfile || '')"
+            alt="User Profile"
+            class="profile-img"
+          />
+        </ng-container>
+        <ng-template #showInitial>
+          <div class="customer-initial">{{ getCustomerInitial() }}</div>
+        </ng-template>
+      </div>
+      <span class="customer-name">{{ review.reviewerName || 'Unknown User' }}</span>
     </div>
   </div>
 
@@ -14,10 +25,12 @@
         ★
       </span>
     </div>
-    <span class="review-date">{{ formatDate(review.date) }}</span>
+    <span class="review-date">
+      {{ review.reviewDate ? formatDate(review.reviewDate.toString()) : '' }}
+    </span>
   </div>
 
   <div class="review-content">
-    <p class="review-text">{{ review.reviewText }}</p>
+    <p class="review-text">{{ review.comment }}</p>
   </div>
 </div>
