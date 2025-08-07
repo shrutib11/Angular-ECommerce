@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, OnInit, SimpleChanges } from '@angular/core';
-import { Product } from '../../models/product.model';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, OnInit, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
+import { Product, ProductMedia } from '../../models/product.model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Category } from '../../models/category.model';
@@ -7,11 +7,12 @@ import { CategoryService } from '../../services/category.service';
 import { AlertService } from '../../shared/alert/alert.service';
 import { ProductService } from '../../services/product.service';
 import { environment } from '../../../environments/environment';
+import { CdkDragDrop, CdkDragMove, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-product-add-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DragDropModule],
   templateUrl: './product-add-edit.component.html',
   styleUrl: './product-add-edit.component.css'
 })
@@ -23,15 +24,21 @@ export class ProductAddEditComponent implements OnInit {
   @Output() closeModal = new EventEmitter<void>();
   @Output() productAddEdit = new EventEmitter<Product>();
 
-  @ViewChild('fileInput') fileInputRef!: ElementRef;
-
   productForm!: FormGroup;
-  selectedFile: File | null = null;
-  imagePreview: string | null = null;
   isSubmitting: boolean = false;
   submitted: boolean = false;
+  isOnlyVideos: boolean = false;
+  fileTouched:boolean = false;
 
   categories: Category[] = [];
+  mediaList: ProductMedia[] = [];
+
+  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+  hoveredTargetIndex: number | null = null;
+  @ViewChildren('videoRef') videoRefs!: QueryList<ElementRef<HTMLVideoElement>>;
+
+  videoStates: { isPlaying: boolean; showIcon: boolean }[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -77,44 +84,137 @@ export class ProductAddEditComponent implements OnInit {
         productImage: this.product.productImage
       });
 
-      if (this.product.productImage) {
-        this.imagePreview = `${environment.baseUrl}/product-uploads/${this.product.productImage.split('/').pop()}`;
+      if (this.product.productMedias?.length) {
+        this.mediaList = this.product.productMedias.map((media) => ({
+          ...media,
+          mediaUrl: `${environment.baseUrl}/product-uploads/${media.mediaUrl.split('/').pop()}`
+        }));
       }
     }
   }
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-    const maxSize = 2 * 1024 * 1024;
+  onFilesSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0) return;
 
-    if (file) {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const newFiles = Array.from(files);
+    if (this.mediaList.length + newFiles.length > 6) {
+      this.alertService.showWarning('Max 6 media files allowed.');
+      return;
+    }
 
-      if (!allowedExtensions.includes(fileExt!)) {
-        this.alertService.showError("Only JPG, JPEG, PNG, and WEBP image files are allowed.");
-        this.selectedFile = null;
-        this.imagePreview = null;
-        this.fileInputRef.nativeElement.value = '';
+    newFiles.forEach((file, index) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      const isImage = ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
+      const isVideo = ['mp4', 'mp3'].includes(ext);
+
+      if (!isImage && !isVideo) {
+        this.alertService.showWarning('Only images and videos are allowed.');
         return;
       }
 
-      if (file.size > maxSize) {
-        this.alertService.showError("Image size must be less than or equal to 2MB.");
-        this.selectedFile = null;
-        this.imagePreview = null;
-        this.fileInputRef.nativeElement.value = '';
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (isImage && fileSizeMB > 2) {
+        this.alertService.showWarning(`Image "${file.name}" exceeds 2MB limit.`);
+        return;
+      }
+      if (isVideo && fileSizeMB > 10) {
+        this.alertService.showWarning(`Video "${file.name}" exceeds 10MB limit.`);
         return;
       }
 
-      this.selectedFile = file;
+
+      const isFirstUpload = this.mediaList.length === 0 && index === 0;
+      if (isFirstUpload && !isImage) {
+        this.alertService.showWarning('The first media file must be an image.(main thumbnail for product)');
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.imagePreview = e.target?.result as string;
+        const media: ProductMedia = {
+          id: 0,
+          productId: 0,
+          mediaUrl: e.target?.result as string,
+          mediaFile: file,
+          mediaType: isImage ? 'Image' : 'Video',
+          displayOrder: this.mediaList.length + 1
+        };
+        this.mediaList.push(media);
+        this.recalculateDisplayOrder();
       };
+
       reader.readAsDataURL(file);
+    });
+
+    this.fileInputRef.nativeElement.value = '';
+  }
+
+  removeMedia(index: number) {
+    this.mediaList.splice(index, 1);
+    this.recalculateDisplayOrder();
+  }
+
+  recalculateDisplayOrder() {
+    const firstImageIndex = this.mediaList.findIndex(m => m.mediaType === 'Image');
+
+    if (firstImageIndex === -1) {
+      this.isOnlyVideos = true;
+      this.alertService.showWarning('At least one image is required as the first media. (Main product thumbnail)');
+    } else if (firstImageIndex !== 0) {
+      this.isOnlyVideos = false;
+      const image = this.mediaList[firstImageIndex];
+      this.mediaList.splice(firstImageIndex, 1);
+      this.mediaList.unshift(image);
     }
+    this.mediaList.forEach((m, i) => m.displayOrder = i + 1);
+  }
+
+  ngAfterViewInit() {
+    this.initializeVideoStates();
+  }
+
+  initializeVideoStates(): void {
+    this.videoStates = this.mediaList.map(() => ({
+      isPlaying: false,
+      showIcon: false
+    }));
+  }
+
+  toggleVideo(video: HTMLVideoElement, index: number): void {
+    if (!video) return;
+
+    if (video.paused) {
+      video.play();
+      this.videoStates[index] = { isPlaying: true, showIcon: true };
+    } else {
+      video.pause();
+      this.videoStates[index] = { isPlaying: false, showIcon: true };
+    }
+
+  }
+
+  onDrop(event: CdkDragDrop<ProductMedia[]>): void {
+    if (this.hoveredTargetIndex == null) return;
+
+    const draggedMedia = this.mediaList[event.previousIndex];
+    const targetMedia = this.mediaList[this.hoveredTargetIndex];
+
+    if (!draggedMedia || !targetMedia) return;
+
+    if ((targetMedia.displayOrder === 1 && draggedMedia.mediaType !== 'Image') ||
+        (draggedMedia.displayOrder === 1 && targetMedia.mediaType !== 'Image')) {
+      this.alertService.showWarning('The first media must be an image. (Main product thumbnail)');
+      this.hoveredTargetIndex = null;
+      return;
+    }
+
+    const temp = draggedMedia.displayOrder;
+    draggedMedia.displayOrder = targetMedia.displayOrder;
+    targetMedia.displayOrder = temp;
+
+    this.mediaList.sort((a, b) => a.displayOrder - b.displayOrder);
+    this.hoveredTargetIndex = null;
   }
 
   onSubmit(): void {
@@ -124,15 +224,26 @@ export class ProductAddEditComponent implements OnInit {
     this.submitted = true;
     this.isSubmitting = true;
 
+
     const formData = new FormData();
     formData.append('name', this.productForm.get('name')?.value);
     formData.append('description', this.productForm.get('description')?.value);
     formData.append('price', this.productForm.get('price')?.value);
     formData.append('stockQuantity', this.productForm.get('stockQuantity')?.value);
     formData.append('categoryId', this.productForm.get('categoryId')?.value);
-    if (this.selectedFile) {
-      formData.append('productImageFile', this.selectedFile);
-    }
+
+    this.mediaList.forEach((media, index) => {
+      formData.append(`ProductMedias[${index}].id`, media.id.toString());
+      formData.append(`ProductMedias[${index}].productId`, media.productId.toString());
+      formData.append(`ProductMedias[${index}].mediaType`, media.mediaType);
+      formData.append(`ProductMedias[${index}].mediaUrl`, media.mediaUrl);
+      formData.append(`ProductMedias[${index}].displayOrder`, media.displayOrder.toString());
+
+      if (media.mediaFile) {
+        formData.append(`ProductMedias[${index}].mediaFile`, media.mediaFile);
+      }
+    });
+
 
     if (this.product?.id) {
       formData.append('id', this.product?.id.toString());
@@ -145,6 +256,7 @@ export class ProductAddEditComponent implements OnInit {
         error: (err) => this.alertService.showError(err?.error?.errorMessage || 'Failed to update product.')
       });
     } else {
+      // console.log([...formData.entries()]);
       this.productService.addProduct(formData).subscribe({
         next: (response) => {
           this.alertService.showSuccess('Product added successfully!');
@@ -158,10 +270,11 @@ export class ProductAddEditComponent implements OnInit {
 
   resetForm(): void {
     this.productForm.reset();
-    this.selectedFile = null;
-    this.imagePreview = null;
+    this.mediaList = [...[]];
     this.isSubmitting = false;
     this.submitted = false;
+    this.isOnlyVideos = false;
+    this.fileTouched = false;
   }
 
   close(): void {
