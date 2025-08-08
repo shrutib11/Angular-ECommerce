@@ -210,7 +210,7 @@
   transition: transform 0.2s ease;
 }
 
-.rating-summary:hover .dropdown-arrow {
+.dropdown-arrow:hover {
   transform: rotate(180deg);
 }
 
@@ -284,7 +284,7 @@
 
 .star-icon {
   margin-right: 4px;
-  font-size: 1.2rem; 
+  font-size: 1.2rem;
 }
 
 .stars {

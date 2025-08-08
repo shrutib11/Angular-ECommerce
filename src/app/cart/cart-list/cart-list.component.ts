@@ -20,34 +20,34 @@ import { SessionService } from '../../services/session.service';
   styleUrl: './cart-list.component.css'
 })
 
-export class CartListComponent implements OnInit{
+export class CartListComponent implements OnInit {
   @Input() items: CartItem[] = [];
   @Output() quantityUpdate = new EventEmitter<CartItem>();
   @Output() removeItem = new EventEmitter<number>();
   showWriteReview = false;
   showThankYou = false;
-  currentUserId = '5';
+  currentUserId = '';
 
   showDeleteModal: boolean = false;
   itemToDelete: CartItem | null = null;
   selectedReviewItem: any = null;
 
   constructor(
-    private cartService : CartService,
-    private alertService : AlertService,
-    private router : Router,
+    private cartService: CartService,
+    private alertService: AlertService,
+    private router: Router,
     private reviewService: ReviewService,
     private sessionService: SessionService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUserId = this.sessionService.getUserId().toString();
   }
 
   getCartImageUrl(path: string): string {
-      const fileName = path.split('/').pop();
-      return `${environment.baseUrl}/product-uploads/${fileName}`;
-    }
+    const fileName = path.split('/').pop();
+    return `${environment.baseUrl}/product-uploads/${fileName}`;
+  }
 
   onQuantityUpdate(item: CartItem): void {
     this.quantityUpdate.emit(item);
@@ -106,8 +106,8 @@ export class CartListComponent implements OnInit{
 
       this.reviewService.addRating(formData).subscribe({
         next: (response) => {
-          if(response.isSuccess){
-            this.alertService.showSuccess("Feeded Added SuccessFully")
+          if (response.isSuccess) {
+            this.alertService.showSuccess("Feedback Added SuccessFully")
             this.showThankYou = true;
           }
           else

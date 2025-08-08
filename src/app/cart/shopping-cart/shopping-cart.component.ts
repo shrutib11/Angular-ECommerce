@@ -5,11 +5,11 @@ import { CartSummaryComponent } from '../cart-summary/cart-summary.component';
 import { UpdateQuantityModalComponent } from '../update-quantity-modal/update-quantity-modal.component';
 import { CartService } from '../../services/cart.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-shopping-cart',
-  imports: [CartListComponent, CartSummaryComponent, UpdateQuantityModalComponent, CommonModule],
+  imports: [CartListComponent, CartSummaryComponent, UpdateQuantityModalComponent, CommonModule, RouterModule],
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.css'
 })
@@ -45,20 +45,12 @@ export class ShoppingCartComponent {
     alert('Proceeding to checkout...');
   }
 
-  onContinueShopping(): void {
-    alert('Continuing shopping...');
-  }
-
   onCloseModal(): void {
     this.isModalOpen = false;
     this.selectedItem = null;
   }
 
-  trackByItemId(index: number, item: CartItem): number {
-    return item.id;
-  }
-
   onStartShopping() {
-    this.router.navigate(['/products']); 
+    this.router.navigate(['/products']);
   }
 }
