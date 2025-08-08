@@ -50,7 +50,6 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     const hashedId = this.route.snapshot.paramMap.get('id') || '';
     const categoryId = this.hashidsService.decode(hashedId);
-
     if (categoryId) {
       this.receivedCategoryId = categoryId;
       this.fetchCategoryDetails(categoryId);

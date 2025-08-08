@@ -5,8 +5,7 @@
       <p class="cart-subtitle">{{ cartItems.length }} items in your cart</p>
     </div>
     <a
-      href="#"
-      (click)="onContinueShopping()"
+      [routerLink]="['/products']"
       class="continue-shopping"
       *ngIf="cartItems.length > 0;"
     >

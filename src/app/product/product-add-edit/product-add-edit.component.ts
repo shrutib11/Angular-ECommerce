@@ -291,6 +291,5 @@ export class ProductAddEditComponent implements OnInit {
   get stockQuantity() { return this.productForm?.get('stockQuantity'); }
   get categoryId() { return this.productForm?.get('categoryId'); }
   get productImage() { return this.productForm?.get('productImage'); }
-
 }
 

@@ -24,7 +24,7 @@
       <h2 class="product-price">{{ product.price | indianCurrency }}</h2>
 
       <div class="ratings-section mb-4">
-        <div class="rating-summary" (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false">
+        <div class="rating-summary">
 
           <div class="stars-container">
             <div class="rating">
@@ -41,7 +41,7 @@
             </div>
           </div>
 
-          <i *ngIf="product.avgRating > 0" class="bi bi-chevron-down dropdown-arrow"></i>
+          <i *ngIf="product.avgRating > 0" class="bi bi-chevron-down dropdown-arrow" (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false"></i>
 
           <div class="rating-modal" *ngIf="product.avgRating > 0" [class.show]="showRatingModal" (mouseenter)="showRatingModal = true"
             (mouseleave)="showRatingModal = false">

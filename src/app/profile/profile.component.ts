@@ -56,7 +56,6 @@ export class ProfileComponent {
         const userId = this.sessionService.getUserId();
         this.userService.getCurrentUserDetails(userId).subscribe({
           next: (response) => {
-            console.log('User details:', response);
             this.currentUser = response.result;
             this.createForm();
             this.formReady = true;
