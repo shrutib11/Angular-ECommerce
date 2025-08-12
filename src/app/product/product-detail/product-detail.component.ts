@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Product } from '../../models/product.model';
+import { ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
+import { Product, ProductMedia } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Category } from '../../models/category.model';
@@ -23,13 +23,25 @@ import { ReviewService } from '../../services/review.service';
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit  {
   isLoading = true;
   product: Product = {} as Product;
   category: Category | null = null;
   isLoggedIn: boolean = false;
   isAddingToCart = false;
   showRatingModal = false;
+
+  sortedImages: string[] = [];
+  currentImageIndex = 0;
+
+  videoStates : {isPlaying:boolean, showIcon:boolean}[] = [];
+  isPLayingVideo: boolean = false;
+  isShowingIcon: boolean = true;
+  duration:number = 0;
+  currentTime:number = 0;
+  progressPercent: number = 0;
+  showControls = false;
+  private controlsTimeout?: any;
 
   // productRating: ProductRating = {
   //   avgRating: 0,
@@ -57,7 +69,8 @@ export class ProductDetailComponent implements OnInit {
     private alertService: AlertService,
     private cartService: CartService,
     private sessionService: SessionService,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +87,8 @@ export class ProductDetailComponent implements OnInit {
       this.productService.getProductById(+productId).pipe(
         switchMap(productResponse => {
           this.product = productResponse.result;
+          this.initializeImageGallery();
+          this.InitializeVideoStates();
           return this.reviewService.getRatingByProduct(+productId).pipe(
             catchError(err => {
               if (err?.status === 404) {
@@ -98,7 +113,9 @@ export class ProductDetailComponent implements OnInit {
         }
       });
     }
+
   }
+
 
   fetchCategory(categoryId: string): void {
     this.categoryService.getCategoryById(categoryId).subscribe({
@@ -151,5 +168,70 @@ export class ProductDetailComponent implements OnInit {
       }
     });
   }
+
+  private initializeImageGallery(): void {
+    if (this.product.productMedias.length > 0) {
+      this.sortedImages = this.product.productMedias
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map(media => media.mediaUrl);
+      this.currentImageIndex = 0;
+    } else {
+      this.sortedImages = [];
+    }
+
+  }
+
+  InitializeVideoStates(): void {
+    this.videoStates = this.product.productMedias.map((media) => ({
+      isPlaying: false,
+      showIcon: media.mediaType === 'Video' ? true : false
+    }));
+  }
+
+  getCurrentImage(): string {
+    if (this.sortedImages.length > 0) {
+      return this.getProductImageUrl(this.sortedImages[this.currentImageIndex]);
+    }
+    return this.getProductImageUrl(this.product.productImage);
+  }
+
+  selectImage(index: number): void {
+    if (index >= 0 && index < this.sortedImages.length) {
+      this.currentImageIndex = index;
+    }
+  }
+
+  previousImage(): void {
+    const len = this.sortedImages.length;
+    if (len > 0) {
+      this.currentImageIndex = this.currentImageIndex > 0
+        ? this.currentImageIndex - 1
+        : len - 1;
+    }
+  }
+
+  nextImage(): void {
+    const len = this.sortedImages.length;
+    if (len > 0) {
+      this.currentImageIndex = this.currentImageIndex < len-1
+        ? this.currentImageIndex + 1
+        : 0;
+    }
+  }
+
+  getTotalImages(): number {
+    return this.sortedImages.length;
+  }
+
+  getCurrentImageNumber(): number {
+    return this.currentImageIndex + 1;
+  }
+
+  isActiveImage(index: number): boolean {
+    return this.currentImageIndex === index;
+  }
+
+  
+
 }
 

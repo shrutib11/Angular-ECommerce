@@ -37,7 +37,7 @@ export class ProductAddEditComponent implements OnInit {
   hoveredTargetIndex: number | null = null;
   @ViewChildren('videoRef') videoRefs!: QueryList<ElementRef<HTMLVideoElement>>;
 
-  videoStates: { isPlaying: boolean; showIcon: boolean }[] = [];
+  videoStates: { isPlaying: boolean; showIcon: boolean}[] = [];
 
 
   constructor(
@@ -90,6 +90,8 @@ export class ProductAddEditComponent implements OnInit {
           mediaUrl: `${environment.baseUrl}/product-uploads/${media.mediaUrl.split('/').pop()}`
         }));
       }
+
+      this.initializeVideoStates();
     }
   }
 
@@ -102,6 +104,9 @@ export class ProductAddEditComponent implements OnInit {
       this.alertService.showWarning('Max 6 media files allowed.');
       return;
     }
+
+    console.log('Media select:', this.productForm.invalid, this.mediaList);
+    console.log(this.isOnlyVideos, this.isSubmitting,this.submitted);
 
     newFiles.forEach((file, index) => {
       const ext = file.name.split('.').pop()?.toLowerCase() || '';
@@ -152,32 +157,38 @@ export class ProductAddEditComponent implements OnInit {
 
   removeMedia(index: number) {
     this.mediaList.splice(index, 1);
+    console.log('Media removed:', this.productForm.invalid, this.mediaList);
+    console.log(this.isOnlyVideos, this.isSubmitting,this.submitted);
     this.recalculateDisplayOrder();
   }
 
   recalculateDisplayOrder() {
     const firstImageIndex = this.mediaList.findIndex(m => m.mediaType === 'Image');
+    console.log('First image index:', firstImageIndex);
 
-    if (firstImageIndex === -1) {
+    if (firstImageIndex === -1 && this.mediaList.length > 0) {
       this.isOnlyVideos = true;
       this.alertService.showWarning('At least one image is required as the first media. (Main product thumbnail)');
-    } else if (firstImageIndex !== 0) {
+    } else if (firstImageIndex !== 0 && firstImageIndex !== -1) {
       this.isOnlyVideos = false;
       const image = this.mediaList[firstImageIndex];
       this.mediaList.splice(firstImageIndex, 1);
       this.mediaList.unshift(image);
+    }else{
+      this.isOnlyVideos = false;
+
     }
     this.mediaList.forEach((m, i) => m.displayOrder = i + 1);
   }
 
-  ngAfterViewInit() {
-    this.initializeVideoStates();
-  }
+  // ngAfterViewInit() {
+  //   this.initializeVideoStates();
+  // }
 
   initializeVideoStates(): void {
     this.videoStates = this.mediaList.map(() => ({
       isPlaying: false,
-      showIcon: false
+      showIcon: true
     }));
   }
 
@@ -186,7 +197,7 @@ export class ProductAddEditComponent implements OnInit {
 
     if (video.paused) {
       video.play();
-      this.videoStates[index] = { isPlaying: true, showIcon: true };
+      this.videoStates[index] = { isPlaying: true, showIcon: false };
     } else {
       video.pause();
       this.videoStates[index] = { isPlaying: false, showIcon: true };
@@ -223,7 +234,6 @@ export class ProductAddEditComponent implements OnInit {
 
     this.submitted = true;
     this.isSubmitting = true;
-
 
     const formData = new FormData();
     formData.append('name', this.productForm.get('name')?.value);
