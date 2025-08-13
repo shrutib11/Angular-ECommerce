@@ -86,6 +86,7 @@ export class NavbarComponent implements OnInit {
     }
 
     if (this.sessionService.getUserRole().toLowerCase() === 'admin') {
+      console.log("HUIfhiuerhfgire")
       this.isAdmin = true;
     }
 

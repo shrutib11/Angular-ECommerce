@@ -17,7 +17,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="nav-link text-dark fw-medium">Home</a>
       <a routerLink="/categories" routerLinkActive="active" class="nav-link text-dark fw-medium">Categories</a>
-      <a routerLink="/users" *ngIf="isAdmin" routerLinkActive="active" class="nav-link text-dark fw-medium">Users</a>
+      <a routerLink="/users" *ngIf="isAdmin && loggedIn" routerLinkActive="active" class="nav-link text-dark fw-medium">Users</a>
       <a routerLink="/products" class="nav-link text-dark fw-medium" routerLinkActive="active">Products</a>
       <a routerLink="/login" *ngIf="!loggedIn" class="nav-link text-dark fw-medium" >Login</a>
       <div class="dropdown" *ngIf="loggedIn">

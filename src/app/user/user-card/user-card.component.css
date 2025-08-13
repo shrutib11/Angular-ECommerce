@@ -1,5 +1,6 @@
 .contact-card {
   max-width: 300px;
+  height: 330px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -130,4 +131,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.user-details .address-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines before cutting off */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* allow wrapping */
+}
 

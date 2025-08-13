@@ -101,14 +101,13 @@ export class UserAddEditComponent implements OnChanges {
       const pascalKey = this.toPascalCase(key);
       if (key === 'UserFile') {
         const file = control.value;
-        if (file) {
+        
+        if (file)
           formData.append('UserImage', file);
-          formData.append('ProfileImage', '');
-        }
-        else if (this.imagePreview) {
+        else if (this.imagePreview)
           formData.append('UserImage', this.imagePreview);
-          formData.append('ProfileImage', '');
-        }
+
+        formData.append('ProfileImage', '');
       } else {
         const value = control.value;
         if (value !== null && value !== undefined) {
