@@ -13,6 +13,7 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.css'
 })
+
 export class ShoppingCartComponent {
   cartItems: CartItem[] = [];
 
@@ -42,7 +43,11 @@ export class ShoppingCartComponent {
   }
 
   onCheckout(): void {
-    alert('Proceeding to checkout...');
+    // alert('Proceeding to checkout...');
+  }
+
+  onContinueShopping(): void {
+    this.router.navigate(['/products']);
   }
 
   onCloseModal(): void {

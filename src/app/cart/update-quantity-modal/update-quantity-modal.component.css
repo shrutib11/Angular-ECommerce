@@ -64,8 +64,6 @@
 }
 
 .product-image {
-  width: 64px;
-  height: 64px;
   background-color: #e9ecef;
   border-radius: 12px;
   display: flex;
@@ -74,9 +72,9 @@
   flex-shrink: 0;
 }
 
-.product-image i {
-  font-size: 1.5rem;
-  color: #6c757d;
+.product-image img {
+  width: 64px;
+  height: 64px;
 }
 
 .product-details h4 {

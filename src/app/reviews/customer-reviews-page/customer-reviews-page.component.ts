@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ReviewItem } from '../../models/review-item.model';
 import { ActivatedRoute } from '@angular/router';
 import { ReviewListComponent } from '../review-list/review-list.component';
 import { CustomerReviewsComponent } from '../customer-reviews/customer-reviews.component';

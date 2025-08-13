@@ -332,7 +332,7 @@
 .main-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* object-fit: contain; */
   display: block;
   transition: transform 0.3s ease;
 }
@@ -425,3 +425,67 @@
   display: block;
 }
 
+/* Existing styles... keep your current styles and add these */
+
+/* Image zoom container */
+.image-zoom-container {
+  cursor: crosshair;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.zoom-lens {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border: 2px solid #007bff;
+  background-color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-preview-overlay {
+  top: 50%;
+  left: 1000px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+}
+
+.zoom-preview-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.zoom-preview-container {
+  position: relative;
+}
+
+.zoom-preview {
+  width: 650px;
+  height: 650px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background-repeat: no-repeat;
+  background-color: #f8f9fa;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.zoom-preview-border {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  opacity: 0.8;
+}

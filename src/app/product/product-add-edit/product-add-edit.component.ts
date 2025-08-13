@@ -128,7 +128,6 @@ export class ProductAddEditComponent implements OnInit {
         return;
       }
 
-
       const isFirstUpload = this.mediaList.length === 0 && index === 0;
       if (isFirstUpload && !isImage) {
         this.alertService.showWarning('The first media file must be an image.(main thumbnail for product)');
@@ -202,7 +201,6 @@ export class ProductAddEditComponent implements OnInit {
       video.pause();
       this.videoStates[index] = { isPlaying: false, showIcon: true };
     }
-
   }
 
   onDrop(event: CdkDragDrop<ProductMedia[]>): void {
@@ -253,7 +251,6 @@ export class ProductAddEditComponent implements OnInit {
         formData.append(`ProductMedias[${index}].mediaFile`, media.mediaFile);
       }
     });
-
 
     if (this.product?.id) {
       formData.append('id', this.product?.id.toString());

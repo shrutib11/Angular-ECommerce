@@ -8,21 +8,28 @@
   <div class="product-section row">
     <div class="product-image-col col-md-6 col-lg-6">
       <div class="image-gallery">
-        <div class="main-image-wrapper">
+        <div class="main-image-wrapper position-relative">
           <ng-container [ngSwitch]="product.productMedias[currentImageIndex].mediaType">
-            <img *ngSwitchCase="'Image'" [src]="getCurrentImage()"
-              [alt]="product.name + ' - Image ' + (currentImageIndex + 1)" class="main-image">
-            
+            <div *ngSwitchCase="'Image'" class="image-zoom-container position-relative"
+              (mousemove)="onImageMouseMove($event)" (mouseenter)="showZoom = true" (mouseleave)="showZoom = false">
+              <img [src]="getCurrentImage()" [alt]="product.name + ' - Image ' + (currentImageIndex + 1)"
+                class="main-image" #mainImage>
+
+              <div class="zoom-lens" [style.left.px]="lensPosition.x" [style.top.px]="lensPosition.y"
+                [class.d-none]="!showZoom"></div>
+            </div>
           </ng-container>
 
           <div class="image-counter">
             {{ getCurrentImageNumber() }}/{{ getTotalImages() }}
           </div>
 
-          <button class="nav-arrow prev" (click)="previousImage()" [disabled]="getTotalImages() <= 1">
+          <button class="nav-arrow prev" (click)="previousImage()" [disabled]="getTotalImages() <= 1"
+            *ngIf="getTotalImages() > 1">
             <i class="bi bi-chevron-left"></i>
           </button>
-          <button class="nav-arrow next" (click)="nextImage()" [disabled]="getTotalImages() <= 1">
+          <button class="nav-arrow next" (click)="nextImage()" [disabled]="getTotalImages() <= 1"
+            *ngIf="getTotalImages() > 1">
             <i class="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -75,7 +82,8 @@
             </div>
           </div>
 
-          <i *ngIf="product.avgRating > 0" class="bi bi-chevron-down dropdown-arrow" (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false"></i>
+          <i *ngIf="product.avgRating > 0" class="bi bi-chevron-down dropdown-arrow"
+            (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false"></i>
 
           <div class="rating-modal" *ngIf="product.avgRating > 0" [class.show]="showRatingModal"
             (mouseenter)="showRatingModal = true" (mouseleave)="showRatingModal = false">
@@ -113,6 +121,15 @@
           <i class="bi bi-share"></i>
         </button>
       </div>
+    </div>
+  </div>
+
+  <div class="zoom-preview-overlay position-fixed" [class.show]="showZoom">
+    <div class="zoom-preview-container">
+      <div class="zoom-preview" [style.background-image]="'url(' + getCurrentImage() + ')'"
+        [style.background-position]="zoomBackgroundPosition" [style.background-size]="zoomBackgroundSize">
+      </div>
+      <div class="zoom-preview-border"></div>
     </div>
   </div>
 </div>

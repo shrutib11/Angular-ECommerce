@@ -3,6 +3,7 @@ import { CartItem } from '../../models/cart-item.model';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
 import { AlertService } from '../../shared/alert/alert.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-update-quantity-modal',
@@ -18,7 +19,7 @@ export class UpdateQuantityModalComponent {
 
   quantity: number = 1;
 
-  constructor(private cartService : CartService, private alertService : AlertService) {}
+  constructor(private cartService: CartService, private alertService: AlertService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['item'] && this.item) {
@@ -51,6 +52,10 @@ export class UpdateQuantityModalComponent {
     }
   }
 
+  getCartImageUrl(path: string): string {
+    const fileName = path.split('/').pop();
+    return `${environment.baseUrl}/product-uploads/${fileName}`;
+  }
 
   get totalPrice(): number {
     return this.item ? this.item.priceAtAddTime * this.quantity : 0;

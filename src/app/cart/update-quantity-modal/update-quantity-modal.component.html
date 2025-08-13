@@ -9,8 +9,9 @@
 
     <div class="product-info">
       <div class="product-image">
-        <i class="fas fa-box text-muted"></i>
+        <img [src]="getCartImageUrl(item.imageUrl)"/>
       </div>
+
       <div class="product-details">
         <h4>{{ item.name }}</h4>
         <!-- <div class="product-attributes">

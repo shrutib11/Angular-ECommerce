@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
-import { Product, ProductMedia } from '../../models/product.model';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Category } from '../../models/category.model';
@@ -14,7 +14,7 @@ import { CustomerReviewsComponent } from '../../reviews/customer-reviews/custome
 import { CartService } from '../../services/cart.service';
 import { SessionService } from '../../services/session.service';
 import { StarRatingPipe } from '../../shared/pipes/star-rating.pipe';
-import { catchError, forkJoin, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 import { ReviewService } from '../../services/review.service';
 
 @Component({
@@ -23,7 +23,9 @@ import { ReviewService } from '../../services/review.service';
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
-export class ProductDetailComponent implements OnInit  {
+export class ProductDetailComponent implements OnInit {
+  @ViewChild('mainImage', { static: false }) mainImageRef!: ElementRef<HTMLImageElement>;
+
   isLoading = true;
   product: Product = {} as Product;
   category: Category | null = null;
@@ -34,20 +36,18 @@ export class ProductDetailComponent implements OnInit  {
   sortedImages: string[] = [];
   currentImageIndex = 0;
 
-  videoStates : {isPlaying:boolean, showIcon:boolean}[] = [];
+  showZoom = false;
+  lensPosition = { x: 0, y: 0 };
+  zoomBackgroundPosition = '0% 0%';
+  zoomBackgroundSize = '200%';
+
+  videoStates: { isPlaying: boolean, showIcon: boolean }[] = [];
   isPLayingVideo: boolean = false;
   isShowingIcon: boolean = true;
-  duration:number = 0;
-  currentTime:number = 0;
+  duration: number = 0;
+  currentTime: number = 0;
   progressPercent: number = 0;
   showControls = false;
-  private controlsTimeout?: any;
-
-  // productRating: ProductRating = {
-  //   avgRating: 0,
-  //   totalReviews: 0,
-  //   ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-  // };
 
   reviewData: ProductRating = {
     avgRating: 0.0,
@@ -69,17 +69,18 @@ export class ProductDetailComponent implements OnInit  {
     private alertService: AlertService,
     private cartService: CartService,
     private sessionService: SessionService,
-    private reviewService: ReviewService,
-    private cdr: ChangeDetectorRef
+    private reviewService: ReviewService
   ) { }
 
   ngOnInit(): void {
     const hashedId = this.route.snapshot.paramMap.get('id') || '';
     const productId = this.hashidsService.decode(hashedId);
 
-    if (this.sessionService.getUserId() != 0) {
-      this.isLoggedIn = true
-    }
+    this.sessionService.sessionReady$.subscribe(isReady => {
+      if (isReady && this.sessionService.getUserId() != 0) {
+        this.isLoggedIn = true
+      }
+    });
 
     if (productId) {
       this.isLoading = true;
@@ -91,6 +92,7 @@ export class ProductDetailComponent implements OnInit  {
           this.InitializeVideoStates();
           return this.reviewService.getRatingByProduct(+productId).pipe(
             catchError(err => {
+              console.log("hii " + err?.status)
               if (err?.status === 404) {
                 this.reviewData = this.reviewData;
               }
@@ -115,7 +117,6 @@ export class ProductDetailComponent implements OnInit  {
     }
 
   }
-
 
   fetchCategory(categoryId: string): void {
     this.categoryService.getCategoryById(categoryId).subscribe({
@@ -213,9 +214,7 @@ export class ProductDetailComponent implements OnInit  {
   nextImage(): void {
     const len = this.sortedImages.length;
     if (len > 0) {
-      this.currentImageIndex = this.currentImageIndex < len-1
-        ? this.currentImageIndex + 1
-        : 0;
+      this.currentImageIndex = this.currentImageIndex < len - 1 ? this.currentImageIndex + 1 : 0;
     }
   }
 
@@ -231,7 +230,33 @@ export class ProductDetailComponent implements OnInit  {
     return this.currentImageIndex === index;
   }
 
-  
+  onImageMouseMove(event: MouseEvent) {
+    const rect = this.mainImageRef.nativeElement.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // From css width-height
+    const lensWidth = 150;
+    const lensHeight = 150;
+
+    let lensX = x - lensWidth / 2;
+    let lensY = y - lensHeight / 2;
+
+    // lens stays inside image
+    lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth));
+    lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight));
+
+    this.lensPosition = { x: lensX, y: lensY };
+
+    // From css width-height
+    const zoomWidth = 650;
+    const zoomHeight = 650;
+
+    const cx = zoomWidth / lensWidth;
+    const cy = zoomHeight / lensHeight;
+
+    this.zoomBackgroundSize = `${rect.width * cx}px ${rect.height * cy}px`;
+    this.zoomBackgroundPosition = `-${lensX * cx}px -${lensY * cy}px`;
+  }
 
 }
-

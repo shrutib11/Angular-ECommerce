@@ -15,4 +15,5 @@ app-user-card {
 }
 .user-list{
   background-color: rgb(239, 239, 239);
+  height: 92vh;
 }
