@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Product } from '../../models/product.model';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Product, ProductMedia } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Category } from '../../models/category.model';
@@ -14,18 +14,18 @@ import { CustomerReviewsComponent } from '../../reviews/customer-reviews/custome
 import { CartService } from '../../services/cart.service';
 import { SessionService } from '../../services/session.service';
 import { StarRatingPipe } from '../../shared/pipes/star-rating.pipe';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule, RouterModule, IndianCurrencyPipe, CustomerReviewsComponent, StarRatingPipe],
+  imports: [CommonModule, RouterModule, IndianCurrencyPipe, CustomerReviewsComponent,
+    StarRatingPipe],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
-export class ProductDetailComponent implements OnInit {
-  @ViewChild('mainImage', { static: false }) mainImageRef!: ElementRef<HTMLImageElement>;
 
+export class ProductDetailComponent implements OnInit {
   isLoading = true;
   product: Product = {} as Product;
   category: Category | null = null;
@@ -36,11 +36,6 @@ export class ProductDetailComponent implements OnInit {
   sortedImages: string[] = [];
   currentImageIndex = 0;
 
-  showZoom = false;
-  lensPosition = { x: 0, y: 0 };
-  zoomBackgroundPosition = '0% 0%';
-  zoomBackgroundSize = '200%';
-
   videoStates: { isPlaying: boolean, showIcon: boolean }[] = [];
   isPLayingVideo: boolean = false;
   isShowingIcon: boolean = true;
@@ -48,6 +43,22 @@ export class ProductDetailComponent implements OnInit {
   currentTime: number = 0;
   progressPercent: number = 0;
   showControls = false;
+  private controlsTimeout?: any;
+  isScrubbing = false;
+  private progressBarElement? : HTMLElement;
+
+
+  @ViewChild('mainImage', { static: false }) mainImageRef!: ElementRef<HTMLImageElement>;
+  showZoom = false;
+  lensPosition = { x: 0, y: 0 };
+  zoomBackgroundPosition = '0% 0%';
+  zoomBackgroundSize = '200%';
+
+  // productRating: ProductRating = {
+  //   avgRating: 0,
+  //   totalReviews: 0,
+  //   ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  // };
 
   reviewData: ProductRating = {
     avgRating: 0.0,
@@ -69,7 +80,8 @@ export class ProductDetailComponent implements OnInit {
     private alertService: AlertService,
     private cartService: CartService,
     private sessionService: SessionService,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -77,7 +89,7 @@ export class ProductDetailComponent implements OnInit {
     const productId = this.hashidsService.decode(hashedId);
 
     this.sessionService.sessionReady$.subscribe(isReady => {
-      if (isReady && this.sessionService.getUserId() != 0) {
+      if (isReady) {
         this.isLoggedIn = true
       }
     });
@@ -92,7 +104,6 @@ export class ProductDetailComponent implements OnInit {
           this.InitializeVideoStates();
           return this.reviewService.getRatingByProduct(+productId).pipe(
             catchError(err => {
-              console.log("hii " + err?.status)
               if (err?.status === 404) {
                 this.reviewData = this.reviewData;
               }
@@ -117,6 +128,7 @@ export class ProductDetailComponent implements OnInit {
     }
 
   }
+
 
   fetchCategory(categoryId: string): void {
     this.categoryService.getCategoryById(categoryId).subscribe({
@@ -163,7 +175,7 @@ export class ProductDetailComponent implements OnInit {
       },
       error: (err) => {
         if (err.message !== 'Not logged in') {
-          this.alertService.showError('Error adding to cart');
+          this.alertService.showError('Please login to add into the cart');
         }
         this.isAddingToCart = false;
       }
@@ -197,12 +209,14 @@ export class ProductDetailComponent implements OnInit {
   }
 
   selectImage(index: number): void {
+    this.StopCurrentVideo();
     if (index >= 0 && index < this.sortedImages.length) {
       this.currentImageIndex = index;
     }
   }
 
   previousImage(): void {
+    this.StopCurrentVideo();
     const len = this.sortedImages.length;
     if (len > 0) {
       this.currentImageIndex = this.currentImageIndex > 0
@@ -212,10 +226,32 @@ export class ProductDetailComponent implements OnInit {
   }
 
   nextImage(): void {
+    this.StopCurrentVideo();
     const len = this.sortedImages.length;
     if (len > 0) {
-      this.currentImageIndex = this.currentImageIndex < len - 1 ? this.currentImageIndex + 1 : 0;
+      this.currentImageIndex = this.currentImageIndex < len - 1
+        ? this.currentImageIndex + 1
+        : 0;
     }
+    this.videoStates[this.currentImageIndex].showIcon = true;
+    this.videoStates[this.currentImageIndex].isPlaying = false;
+  }
+
+  private StopCurrentVideo(): void {
+    const index = this.getCurrentImageNumber() - 1;
+    if (index < 0 || index >= this.videoStates.length) return;
+
+    if (this.videoStates[index].isPlaying) {
+      this.videoStates[index].isPlaying = false;
+      this.videoStates[index].showIcon = true;
+    }
+
+    this.showControls = false;
+    this.isShowingIcon = true;
+    if (this.controlsTimeout) {
+      clearTimeout(this.controlsTimeout);
+    }
+    this.cdr.detectChanges();
   }
 
   getTotalImages(): number {
@@ -228,6 +264,138 @@ export class ProductDetailComponent implements OnInit {
 
   isActiveImage(index: number): boolean {
     return this.currentImageIndex === index;
+  }
+
+  onMetadataLoaded(video: HTMLVideoElement): void {
+    this.duration = video.duration;
+  }
+
+  onTimeUpdate(video: HTMLVideoElement): void {
+    this.currentTime = video.currentTime;
+    if (this.duration > 0) {
+      this.progressPercent = (this.currentTime / this.duration) * 100;
+    }
+  }
+
+  seekVideo(event: MouseEvent, video: HTMLVideoElement): void {
+    const progressContainer = event.currentTarget as HTMLElement;
+    const clcikX = event.offsetX;
+    const width = progressContainer.clientWidth;
+    const seekTime = (clcikX / width) * this.duration;
+    video.currentTime = seekTime;
+  }
+
+  formatTime(seconds: number): string {
+    if (!seconds) return '0:00';
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  onVideoPlay(): void {
+    this.showVideoControls();
+    this.cdr.detectChanges();
+  }
+
+  onVideoPause(): void {
+    this.isShowingIcon = true;
+    this.showControls = true;
+    if (this.controlsTimeout) {
+      clearTimeout(this.controlsTimeout);
+    }
+    this.cdr.detectChanges();
+  }
+
+  showVideoControls(): void {
+    const index = this.getCurrentImageNumber() - 1;
+    if (index < 0 || index >= this.videoStates.length) return;
+
+    this.showControls = true;
+
+    if (this.controlsTimeout) {
+      clearTimeout(this.controlsTimeout);
+    }
+
+    if (this.videoStates[index].isPlaying) {
+      this.controlsTimeout = setTimeout(() => {
+        this.showControls = false;
+        this.isShowingIcon = false;
+        this.cdr.detectChanges();
+      }, 3000);
+    }
+  }
+
+
+  toggleVideo(videoRef: HTMLVideoElement): void {
+    const index = this.getCurrentImageNumber() - 1;
+
+    if (index < 0 || index >= this.videoStates.length) {
+      return;
+    }
+
+    if (this.videoStates[index].isPlaying) {
+      videoRef.pause();
+      this.videoStates[index].isPlaying = false;
+      this.videoStates[index].showIcon = true;
+    } else {
+      videoRef.play();
+      this.videoStates[index].isPlaying = true;
+      this.videoStates[index].showIcon = true;
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  onScrubbingStart(event : MouseEvent, video:HTMLVideoElement) :void{
+    this.isScrubbing = true;
+    this.progressBarElement = event.currentTarget as HTMLElement;
+
+    const index = this.getCurrentImageNumber() - 1;
+
+    if (index < 0 || index >= this.videoStates.length) {
+      return;
+    }
+    video.pause();
+    this.videoStates[index].isPlaying = false;
+    this.videoStates[index].showIcon = true;
+    this.showControls = true;
+    if (this.controlsTimeout) {
+      clearTimeout(this.controlsTimeout);
+    }
+    this.updateProgress(event);
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onScrubbing(event: MouseEvent, video:HTMLVideoElement): void {
+    if (this.isScrubbing && this.progressBarElement) {
+      this.updateProgress(event,video,this.progressBarElement);
+    }
+  }
+
+  @HostListener('document:mouseup')
+  onScrubbingEnd(): void {
+    this.isScrubbing = false;
+    if (this.progressBarElement) {
+      this.progressBarElement = undefined;
+    }
+  }
+
+  private updateProgress(event: MouseEvent, video?: HTMLVideoElement,element?:HTMLElement): void {
+    const progressContainer = element || (event.currentTarget as HTMLElement);
+    if(!progressContainer || !progressContainer.getBoundingClientRect)
+      return;
+
+    const rect = progressContainer.getBoundingClientRect();
+    let percent = 0;
+
+    if (rect) {
+      percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+    }
+
+    this.progressPercent = percent * 100;
+    if (video) {
+      video.currentTime = percent * video.duration;
+    }
   }
 
   onImageMouseMove(event: MouseEvent) {
@@ -259,4 +427,6 @@ export class ProductDetailComponent implements OnInit {
     this.zoomBackgroundPosition = `-${lensX * cx}px -${lensY * cy}px`;
   }
 
+
 }
+
