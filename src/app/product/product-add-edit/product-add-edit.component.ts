@@ -105,9 +105,6 @@ export class ProductAddEditComponent implements OnInit {
       return;
     }
 
-    console.log('Media select:', this.productForm.invalid, this.mediaList);
-    console.log(this.isOnlyVideos, this.isSubmitting,this.submitted);
-
     newFiles.forEach((file, index) => {
       const ext = file.name.split('.').pop()?.toLowerCase() || '';
       const isImage = ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
@@ -156,14 +153,11 @@ export class ProductAddEditComponent implements OnInit {
 
   removeMedia(index: number) {
     this.mediaList.splice(index, 1);
-    console.log('Media removed:', this.productForm.invalid, this.mediaList);
-    console.log(this.isOnlyVideos, this.isSubmitting,this.submitted);
     this.recalculateDisplayOrder();
   }
 
   recalculateDisplayOrder() {
     const firstImageIndex = this.mediaList.findIndex(m => m.mediaType === 'Image');
-    console.log('First image index:', firstImageIndex);
 
     if (firstImageIndex === -1 && this.mediaList.length > 0) {
       this.isOnlyVideos = true;
@@ -263,7 +257,6 @@ export class ProductAddEditComponent implements OnInit {
         error: (err) => this.alertService.showError(err?.error?.errorMessage || 'Failed to update product.')
       });
     } else {
-      // console.log([...formData.entries()]);
       this.productService.addProduct(formData).subscribe({
         next: (response) => {
           this.alertService.showSuccess('Product added successfully!');

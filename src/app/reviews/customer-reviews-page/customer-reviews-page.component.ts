@@ -6,6 +6,7 @@ import { ProductRating, Rating } from '../../models/reviewData.model';
 import { ReviewDataService } from '../../services/review-data.service';
 import { ReviewService } from '../../services/review.service';
 import { HashidsService } from '../../services/hashids.service';
+import { AlertService } from '../../shared/alert/alert.service';
 
 @Component({
   selector: 'app-customer-reviews-page',
@@ -30,7 +31,12 @@ export class CustomerReviewsPageComponent {
 
   reviews: Rating[] = [];
 
-  constructor(private route: ActivatedRoute, private reviewDataService: ReviewDataService, private reviewService: ReviewService, private hashidsService: HashidsService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private reviewDataService: ReviewDataService,
+    private reviewService: ReviewService,
+    private hashidsService: HashidsService,
+  private alertService: AlertService) { }
 
   ngOnInit(): void {
     const hashedId = this.route.snapshot.paramMap.get('id') || '';
@@ -60,7 +66,7 @@ export class CustomerReviewsPageComponent {
         this.reviews = data;
       },
       error: (err) => {
-        console.error('Error fetching ratings:', err);
+        this.alertService.showError("Error fetching ratings");
       }
     });
   }

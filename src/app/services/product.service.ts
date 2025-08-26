@@ -5,7 +5,6 @@ import { ApiResponse } from '../models/api-response.model';
 import { Product } from '../models/product.model';
 import { environment } from '../../environments/environment';
 import Hashids from 'hashids';
-import { ProductRating } from '../models/reviewData.model';
 
 @Injectable({
   providedIn: 'root'

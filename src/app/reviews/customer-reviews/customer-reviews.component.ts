@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { ProductRating } from '../../models/reviewData.model';
@@ -14,22 +14,21 @@ import { HashidsService } from '../../services/hashids.service';
 export class CustomerReviewsComponent{
   @Input() reviewData: ProductRating = {
     avgRating: 4.0,
-    totalReviews: 16281,
+    totalReviews: 0,
     ratingDistribution: {
-      5 : 100,
-      4: 22,
-      3: 14,
-      2: 5,
-      1: 9
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0
     }
   };
 
   @Input() productId: string = '';
   @Input() asModal: boolean = false;
 
-  constructor(private router: Router, private reviewDataService: ReviewDataService, private hashedService : HashidsService) {
+  constructor(private router: Router, private reviewDataService: ReviewDataService, private hashedService : HashidsService) {}
 
-  }
   get hashedProductId(): string {
     return this.hashedService.encode(Number(this.productId));
   }

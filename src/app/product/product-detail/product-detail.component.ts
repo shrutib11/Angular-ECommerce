@@ -120,7 +120,6 @@ export class ProductDetailComponent implements OnInit {
           this.fetchCategory(this.product.categoryId.toString());
         },
         error: (err) => {
-          console.error("Product fetch failed:", err);
           this.isLoading = false;
           this.alertService.showError('Failed to load product details. Please try again later.');
         }
