@@ -1,0 +1,105 @@
+<div class="notifications-dropdown position-absolute end-0 mt-2 shadow-lg bg-white"
+     [class.show]="showNotifications">
+
+  <div class="notifications-header d-flex align-items-center p-3 border-bottom bg-light">
+    <button class="btn btn-link p-0 text-dark me-3" (click)="closeNotifications.emit()">
+      <i class="bi bi-arrow-left fs-5"></i>
+    </button>
+    <h6 class="mb-0 fw-semibold">Notifications</h6>
+  </div>
+
+  <div class="notification-filters d-flex justify-content-between align-items-center p-3 border-bottom">
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm rounded-pill px-3 fw-medium"
+              [class.btn-dark]="activeFilter === 'all'"
+              [class.btn-outline-secondary]="activeFilter !== 'all'"
+              (click)="setFilter('all')">
+        All <span class="badge ms-1" [class.bg-light]="activeFilter === 'all'" [class.text-dark]="activeFilter === 'all'" [class.bg-secondary]="activeFilter !== 'all'">{{ getTotalCount() }}</span>
+      </button>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-medium"
+              [class.btn-dark]="activeFilter === 'unread'"
+              [class.btn-outline-secondary]="activeFilter !== 'unread'"
+              (click)="setFilter('unread')">
+        Unread <span class="badge ms-1" [class.bg-light]="activeFilter === 'unread'" [class.text-dark]="activeFilter === 'unread'" [class.bg-secondary]="activeFilter !== 'unread'">{{ getUnreadCount() }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="notifications-list" style="max-height: 400px; overflow-y: auto;">
+
+    <div *ngIf="getFilteredTodayNotifications().length > 0">
+      <div class="notification-date-header d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+        <small class="text-muted fw-semibold">Today</small>
+        <!-- <button class="btn btn-link btn-sm p-0 text-muted">
+          <i class="bi bi-chevron-up"></i>
+        </button> -->
+      </div>
+
+      <div class="notification-item d-flex align-items-start p-3"
+           *ngFor="let notification of getFilteredTodayNotifications()"
+           [class.notification-unread]="!notification.isRead"
+           [class.border-bottom]="!isLastNotification(notification, getFilteredTodayNotifications())">
+
+        <div class="notification-icon me-3 mt-1">
+          <div class="icon-wrapper d-flex align-items-center justify-content-center rounded"
+               [ngClass]="getIconClass(notification.type)">
+            <i [class]="getIconName(notification.type)" class="text-white"></i>
+          </div>
+        </div>
+
+        <div class="notification-content flex-grow-1">
+          <div class="notification-title fw-semibold text-dark">{{ notification.title }}</div>
+          <div class="notification-message text-muted small mt-1">{{ notification.message }}</div>
+        </div>
+
+        <div class="notification-time-status text-end d-flex flex-column align-items-end">
+          <small class="text-muted">{{ notification.timeAgo }}</small>
+          <button class="btn btn-link p-0 mt-1 notification-status-btn"
+                  *ngIf="!notification.isRead"
+                  (click)="markAsRead(notification.id)">
+            <span class="badge bg-primary rounded-pill notification-dot"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="getFilteredYesterdayNotifications().length > 0">
+      <div class="notification-date-header d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+        <small class="text-muted fw-semibold">Yesterday</small>
+      </div>
+
+      <div class="notification-item d-flex align-items-start p-3"
+           *ngFor="let notification of getFilteredYesterdayNotifications()"
+           [class.notification-unread]="!notification.isRead"
+           [class.border-bottom]="!isLastNotification(notification, getFilteredYesterdayNotifications())">
+
+        <div class="notification-icon me-3 mt-1">
+          <div class="icon-wrapper d-flex align-items-center justify-content-center rounded"
+               [ngClass]="getIconClass(notification.type)">
+            <i [class]="getIconName(notification.type)" class="text-white"></i>
+          </div>
+        </div>
+
+        <div class="notification-content flex-grow-1">
+          <div class="notification-title fw-semibold text-dark">{{ notification.title }}</div>
+          <div class="notification-message text-muted small mt-1">{{ notification.message }}</div>
+        </div>
+
+        <div class="notification-time-status text-end d-flex flex-column align-items-end">
+          <small class="text-muted">{{ notification.timeAgo }}</small>
+          <button class="btn btn-link p-0 mt-1 notification-status-btn"
+                  *ngIf="!notification.isRead"
+                  (click)="markAsRead(notification.id)">
+            <span class="badge bg-primary rounded-pill notification-dot"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="getFilteredNotifications().length === 0" class="text-center py-4">
+      <i class="bi bi-bell-slash fs-1 text-muted mb-3"></i>
+      <p class="text-muted">No notifications found</p>
+    </div>
+
+  </div>
+</div>

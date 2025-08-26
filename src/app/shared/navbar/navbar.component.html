@@ -8,18 +8,19 @@
           <i class="bi bi-search text-muted"></i>
         </span>
         <input type="text" class="form-control border-0 shadow-none" placeholder="Search products..."
-          [(ngModel)]="searchText" (keydown.enter)="onEnter()" [ngModelOptions]="{ standalone: true }"/>
+          [(ngModel)]="searchText" (keydown.enter)="onEnter()" [ngModelOptions]="{ standalone: true }" />
       </div>
     </form>
 
-    <!-- Navigation Links Right -->
     <div class="d-flex align-items-center gap-4">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="nav-link text-dark fw-medium">Home</a>
       <a routerLink="/categories" routerLinkActive="active" class="nav-link text-dark fw-medium">Categories</a>
-      <a routerLink="/users" *ngIf="isAdmin && loggedIn" routerLinkActive="active" class="nav-link text-dark fw-medium">Users</a>
+      <a routerLink="/users" *ngIf="isAdmin && loggedIn" routerLinkActive="active"
+        class="nav-link text-dark fw-medium">Users</a>
       <a routerLink="/products" class="nav-link text-dark fw-medium" routerLinkActive="active">Products</a>
-      <a routerLink="/login" *ngIf="!loggedIn" class="nav-link text-dark fw-medium" >Login</a>
+      <a routerLink="/login" *ngIf="!loggedIn" class="nav-link text-dark fw-medium">Login</a>
+
       <div class="dropdown" *ngIf="loggedIn">
         <a class="nav-link text-dark d-flex align-items-center gap-1 dropdown-toggle" href="#" role="button"
           data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none">
@@ -43,19 +44,35 @@
             <hr class="dropdown-divider" />
           </li>
           <li>
-            <a [routerLink]="['/']" (click)="logout()" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+            <a [routerLink]="['/']" (click)="logout()"
+              class="dropdown-item d-flex align-items-center gap-2 text-danger">
               <i class="bi bi-box-arrow-right"></i>
               Logout
             </a>
           </li>
         </ul>
       </div>
+
+      <div class="position-relative" *ngIf="loggedIn">
+        <button class="btn btn-link nav-link text-dark p-0 border-0 bg-transparent position-relative"
+          (click)="toggleNotifications()" #notificationBtn>
+          <i class="bi bi-bell fs-5"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            *ngIf="unreadCount > 0" style="font-size: 0.7rem;">
+            {{ unreadCount }}
+          </span>
+        </button>
+
+        <app-notifications [showNotifications]="showNotifications" (closeNotifications)="closeNotifications()"
+          (notificationRead)="onNotificationRead($event)">
+        </app-notifications>
+      </div>
+
       <div>
         <a routerLink="/cart" *ngIf="loggedIn" class="nav-link text-dark">
           <i class="bi bi-cart fs-5"></i>
 
-          <span class="position-absolute translate-middle badge rounded-pill bg-danger"
-            style="top: 25%;right: 1%;">
+          <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="top: 25%;right: 1%;">
             {{ cartCount }}
             <span class="visually-hidden">cart items</span>
           </span>
