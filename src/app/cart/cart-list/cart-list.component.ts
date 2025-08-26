@@ -120,7 +120,7 @@ export class CartListComponent implements OnInit {
 
       this.showWriteReview = false;
     } catch (error) {
-      console.error('Error submitting review:', error);
+      this.alertService.showError("Error submitting review");
     }
   }
 

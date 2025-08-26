@@ -18,7 +18,6 @@
 .user-badge{
   color: #02356f;
   background-color: #a4d8ff;
-
 }
 
 .card-header {
@@ -131,12 +130,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.user-details .address-text {
+.address-truncate {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* number of lines before cutting off */
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal; /* allow wrapping */
+  max-height: 2.6em; 
+  line-height: 1.3;
 }
 

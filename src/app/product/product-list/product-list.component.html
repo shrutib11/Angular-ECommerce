@@ -9,7 +9,7 @@
       <h2 class="mb-2 pt-3">{{ receivedCategory.name }}</h2>
       <p class="text-muted fs-5">{{ receivedCategory.description }}</p>
       <p class="products-counter-accent mt-2">{{products.length}} Products available</p>
-      <button class="btn btn-add mt-4" (click)="openAddEditModal()">
+      <button class="btn btn-add mt-4" (click)="openAddEditModal()" *ngIf="isAdmin && isLoggedIn">
         <i class="bi bi-plus-lg"></i> Add Product
       </button>
     </div>
@@ -32,7 +32,7 @@
       <button class="btn btn-dark" routerLink="/categories">
         <i class="bi bi-tags"></i> Browse Categories
       </button>
-      <button class="btn btn-outline-secondary" (click)="openAddEditModal()" *ngIf="isAdmin">
+      <button class="btn btn-outline-secondary" (click)="openAddEditModal()" *ngIf="isAdmin && isLoggedIn">
         <i class="bi bi-plus-lg"></i> Add Product
       </button>
     </div>

@@ -64,7 +64,6 @@ export class WriteReviewComponent {
       this.submit.emit(reviewData);
       this.resetForm();
     } catch (error) {
-      console.error('Error submitting review:', error);
       this.errors.submit = 'Failed to submit review. Please try again.';
     } finally {
       this.isSubmitting = false;

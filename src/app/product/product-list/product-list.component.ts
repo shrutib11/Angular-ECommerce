@@ -121,7 +121,6 @@ export class ProductListComponent implements OnInit {
         }
       });
     }else{
-
       this.productService.getAllProducts().subscribe({
         next: (response) => {
           this.products = response.result;
@@ -200,7 +199,4 @@ export class ProductListComponent implements OnInit {
     this.productToDelete = null;
     this.isDeleting = false;
   }
-
-
-
 }

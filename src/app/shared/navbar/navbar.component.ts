@@ -72,7 +72,6 @@ export class NavbarComponent implements OnInit {
   }
 
   private initializeNavbar() {
-
     this.CommunicationService.isAdmin$.subscribe(show => this.isAdmin = show);
     this.CommunicationService.isLoggedIn$.subscribe(show => {
       this.loggedIn = show;
