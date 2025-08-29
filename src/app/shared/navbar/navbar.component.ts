@@ -9,6 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { CartService } from '../../services/cart.service';
 import { FormsModule } from '@angular/forms';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { KeycloakService } from '../../services/keycloak.service';
 
 @Component({
   selector: 'app-navbar',
@@ -48,34 +49,53 @@ export class NavbarComponent implements OnInit {
     private sessionService: SessionService,
     private cookieService: CookieService,
     private cartService: CartService,
-    private router: Router) { }
+    private router: Router,
+    private keycloakService: KeycloakService) {
+      this.CommunicationService.isLoggedIn$.subscribe(val => this.loggedIn = val);
+      this.CommunicationService.isAdmin$.subscribe(val => this.isAdmin = val);
+    }
 
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: Event): void {
-      const target = event.target as HTMLElement;
-      const clickedOnButton = this.notificationBtn?.nativeElement.contains(target);
-      const notificationDropdown = document.querySelector('.notifications-dropdown');
-      const clickedInsideDropdown = notificationDropdown?.contains(target);
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const clickedOnButton = this.notificationBtn?.nativeElement.contains(target);
+    const notificationDropdown = document.querySelector('.notifications-dropdown');
+    const clickedInsideDropdown = notificationDropdown?.contains(target);
 
-      if (!clickedInsideDropdown && !clickedOnButton && this.showNotifications) {
-        this.showNotifications = false;
+    if (!clickedInsideDropdown && !clickedOnButton && this.showNotifications) {
+      this.showNotifications = false;
+    }
+  }
+
+  onNotificationRead(notification: number): void {
+    this.updateUnreadCount();
+  }
+
+  private updateUnreadCount(): void {
+    // This should ideally come from a service
+    // For now, we'll simulate it by getting the count from the notifications component
+    setTimeout(() => {
+      const notificationsComponent = document.querySelector('app-notifications');
+      if (notificationsComponent) {
+        this.unreadCount = this.getUnreadCountFromService();
       }
-    }
+    }, 100);
+  }
 
-    onNotificationRead(notification : any )
-    {
-      console.log("Inside onNotificationRead")
-    }
+  private getUnreadCountFromService(): number {
+    // This should be replaced with actual service call
+    // For demo, we'll start with 3 unread notifications
+    // and decrease as they are marked as read
+    return 3;
+  }
 
-    closeNotifications()
-    {
+  closeNotifications(): void {
+    this.showNotifications = false;
+  }
 
-    }
-
-    toggleNotifications()
-    {
-      this.showNotifications = !this.showNotifications
-    }
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications
+  }
 
   Register() {
     this.isRegister = true;
@@ -83,9 +103,10 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    this.cookieService.delete("Token");
-    this.sessionService.clear();
-    this.loggedIn = false;
+    // this.cookieService.delete("Token");
+    // this.sessionService.clear();
+    // this.loggedIn = false;
+    this.keycloakService.logout();
   }
 
   ngOnInit() {
@@ -101,6 +122,12 @@ export class NavbarComponent implements OnInit {
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
+
+    this.updateUnreadCount();
+  }
+
+  login() {
+    this.keycloakService.login();
   }
 
   private initializeNavbar() {
@@ -117,7 +144,6 @@ export class NavbarComponent implements OnInit {
     }
 
     if (this.sessionService.getUserRole().toLowerCase() === 'admin') {
-      console.log("HUIfhiuerhfgire")
       this.isAdmin = true;
     }
 

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Notification } from '../../models/notification.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-notifications',
@@ -61,6 +62,8 @@ export class NotificationsComponent implements OnInit {
       timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000)
     }
   ];
+
+  constructor(private notificationService : NotificationService) {}
 
   ngOnInit() {
     this.updateFilteredNotifications();
