@@ -19,7 +19,7 @@
       <a routerLink="/users" *ngIf="isAdmin && loggedIn" routerLinkActive="active"
         class="nav-link text-dark fw-medium">Users</a>
       <a routerLink="/products" class="nav-link text-dark fw-medium" routerLinkActive="active">Products</a>
-      <a routerLink="/login" *ngIf="!loggedIn" class="nav-link text-dark fw-medium">Login</a>
+      <a (click)="login()" *ngIf="!loggedIn" class="nav-link text-dark fw-medium">Login</a>
 
       <div class="dropdown" *ngIf="loggedIn">
         <a class="nav-link text-dark d-flex align-items-center gap-1 dropdown-toggle" href="#" role="button"
@@ -44,7 +44,7 @@
             <hr class="dropdown-divider" />
           </li>
           <li>
-            <a [routerLink]="['/']" (click)="logout()"
+            <a (click)="logout()"
               class="dropdown-item d-flex align-items-center gap-2 text-danger">
               <i class="bi bi-box-arrow-right"></i>
               Logout

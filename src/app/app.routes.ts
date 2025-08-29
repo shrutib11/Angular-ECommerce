@@ -10,6 +10,8 @@ import { ShoppingCartComponent } from './cart/shopping-cart/shopping-cart.compon
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 import { UnauthorizedComponent } from './shared/pages/unauthorized/unauthorized.component';
 import { CustomerReviewsPageComponent } from './reviews/customer-reviews-page/customer-reviews-page.component';
+import { authRedirectGuard } from './guards/auth-redirect.guard';
+import { LoginRedirectComponent } from './shared/login-redirect/login-redirect.component';
 
 export const routes: Routes = [
   {
@@ -22,11 +24,12 @@ export const routes: Routes = [
   },
   {
     path: 'users',
-    component: UserListComponent
+    canActivate: [authRedirectGuard],
+    loadComponent: () => import('./user/user-list/user-list.component').then(m => m.UserListComponent)
   },
   {
     path: 'login',
-    component: LoginComponent,
+    component: LoginRedirectComponent,
     data: { noPadding: true }
   },
   {

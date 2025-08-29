@@ -5,7 +5,7 @@
     <button class="btn btn-dark" [routerLink]="['/products']">
       <i class="bi bi-box-seam"></i> Browse All Products
     </button>
-    <button class="btn btn-outline-secondary" (click)="openAddModal()" *ngIf="isAdmin">
+    <button class="btn btn-outline-secondary" (click)="openAddModal()" *ngIf="isAdmin && isLoggedIn">
       <i class="bi bi-plus"></i> Add Category
     </button>
   </div>
