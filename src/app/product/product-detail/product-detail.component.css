@@ -449,7 +449,7 @@
 
 .zoom-preview-overlay {
   top: 50%;
-  left: 1000px;
+  left: 979px;
   transform: translateY(-50%);
   z-index: 1000;
   opacity: 0;

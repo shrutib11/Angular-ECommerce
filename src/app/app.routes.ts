@@ -43,7 +43,8 @@ export const routes: Routes = [
   },
   {
     path: 'account',
-    component: ProfileComponent
+    canActivate: [authRedirectGuard],
+    loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent)
   },
   {
     path: 'products',
