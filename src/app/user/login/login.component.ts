@@ -27,7 +27,6 @@ export class LoginComponent {
   isResetPassword: boolean = false;
   isNewPassword: boolean = false;
   receiverEmail: string = '';
-  // @Output() onRegister = new EventEmitter<void>();
   isSubmitted = false;
   userCart: CartModel = {
     id: null,
@@ -41,7 +40,8 @@ export class LoginComponent {
     private sessionService: SessionService,
     private userService: UserService,
     private modalService: ComponentCommunicationService,
-    private cartService: CartService) {
+    private cartService: CartService
+  ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.required,
