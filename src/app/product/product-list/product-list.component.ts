@@ -54,18 +54,17 @@ export class ProductListComponent implements OnInit {
       this.receivedCategoryId = categoryId;
       this.fetchCategoryDetails(categoryId);
       this.fetchProductsByCategory(categoryId);
-      return;
+    } else {
+      this.route.queryParams.subscribe(params => {
+        const searchTerm = params['search'];
+
+        if (searchTerm && searchTerm.trim()) {
+          this.fetchAllProducts(searchTerm.trim());
+        } else {
+          this.fetchAllProducts();
+        }
+      });
     }
-
-    this.route.queryParams.subscribe(params => {
-      const searchTerm = params['search'];
-
-      if (searchTerm && searchTerm.trim()) {
-        this.fetchAllProducts(searchTerm.trim());
-      } else {
-        this.fetchAllProducts();
-      }
-    });
 
     this.communicationService.isAdmin$.subscribe(show => {
       this.isAdmin = show

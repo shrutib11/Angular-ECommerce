@@ -6,6 +6,7 @@ import { AppCookieService } from './cookie.service';
 import { CartService } from './cart.service';
 import { CartModel } from '../models/cart.model';
 import { AlertService } from '../shared/alert/alert.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,24 +15,25 @@ export class KeycloakService {
   private keycloak: Keycloak;
 
   userCart: CartModel = {
-      id: null,
-      userId: 0,
-    };
+    id: null,
+    userId: 0,
+  };
 
   constructor(
     private commService: ComponentCommunicationService,
-    private sessionService : SessionService,
-    private cookieService : AppCookieService,
-    private cartService : CartService,
-    private alertService : AlertService) {
+    private sessionService: SessionService,
+    private cookieService: AppCookieService,
+    private cartService: CartService,
+    private alertService: AlertService,
+    private userService: UserService) {
     this.keycloak = new Keycloak({
       url: 'http://192.168.0.60:8080/',
       realm: 'my-realm',
       clientId: 'angular-client'
     });
-   }
+  }
 
-   async init(): Promise<boolean> {
+  async init(): Promise<boolean> {
     const authenticated = await this.keycloak.init({
       onLoad: 'check-sso',
       checkLoginIframe: false,
@@ -43,8 +45,10 @@ export class KeycloakService {
 
     if (authenticated) {
       const token = this.keycloak.token;
+      // console.log('Token:', token);
       const tokenParsed = this.keycloak.tokenParsed;
-      const roles = this.keycloak.tokenParsed?.realm_access?.roles || [];
+      // console.log('Token Parsed:', tokenParsed);
+      const roles = this.keycloak.tokenParsed?.['roles'] || [];
       const email = this.keycloak.tokenParsed?.['email'];
       const userId = this.keycloak.tokenParsed?.['userId']
 
@@ -54,11 +58,13 @@ export class KeycloakService {
         this.commService.userRole();
       }
 
-      this.sessionService.setEmail(this.keycloak.tokenParsed?.['email']);
+      this.sessionService.setEmail(email);
       this.sessionService.setUserId(userId)
       this.sessionService.setUserRole(
         roles?.includes('Admin') ? 'Admin' : 'User'
       );
+      this.cookieService.setCookie("Token", this.keycloak.token!, 1);
+
       this.cartService.getUserCart(userId).subscribe({
         next: (response) => {
           this.userCart = { ...response.result };
@@ -81,11 +87,26 @@ export class KeycloakService {
           }
         }
       });
-      this.sessionService.markSessionReady()
-      this.cookieService.setCookie("Token", this.keycloak.token!, 7);
+      this.sessionService.markSessionReady();
+    }
+
+    if (authenticated) {
+      this.startTokenRefresh();
     }
 
     return authenticated;
+  }
+
+  private startTokenRefresh() {
+    setInterval(() => {
+      this.keycloak.updateToken(30).then((refreshed) => {
+        if (refreshed) {
+          this.cookieService.setCookie("Token", this.keycloak.token!, 1);
+        }
+      }).catch(() => {
+        this.logout();
+      });
+    }, 60000);
   }
 
   login(): void {
@@ -95,13 +116,23 @@ export class KeycloakService {
   }
 
   logout(): void {
-    this.keycloak.logout({ redirectUri: window.location.origin });
+    if (this.keycloak.refreshToken) {
+      this.userService.logout(this.keycloak.refreshToken).subscribe({
+        next: (response) => {
+          // this.keycloak.logout({ redirectUri: window.location.origin });
+          this.keycloak.clearToken?.();
+          this.sessionService.clear();
+          this.commService.isLoggedIn(false);
+          this.cookieService.deleteCookie("Token");
+        },
+        error: (error: any) => {
+          this.alertService.showError(`Logout failed : ${error.error.errorMessage}`)
+        }
+      });
+    } else {
+      this.alertService.showError('No refresh token available for logout.');
+    }
 
-    this.keycloak.clearToken?.();
-    this.sessionService.clear();
-    console.log(this.sessionService.getUserId())
-    this.commService.isLoggedIn(false);
-    this.cookieService.deleteCookie("Token");
   }
 
   getToken(): string | undefined {

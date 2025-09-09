@@ -40,4 +40,10 @@ export class UserService {
   resetPassword(userData: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.baseUrl}/reset-password`, userData);
   }
+
+  logout(refreshtoken : string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`,
+      JSON.stringify(refreshtoken),
+    { headers: { 'Content-Type': 'application/json' } });
+  }
 }
