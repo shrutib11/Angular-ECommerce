@@ -103,11 +103,19 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    // this.cookieService.delete("Token");
-    // this.sessionService.clear();
-    // this.loggedIn = false;
     this.keycloakService.logout();
+    this.cookieService.deleteAll();
+    this.sessionService.clear();
+    this.CommunicationService.isLoggedIn(false);
+    this.sessionService.markSessionReady(); 
+    this.router.navigate(['/']);
   }
+
+  onUpsertCompleted(upsertCompleted: boolean) {
+    this.showModal = false;
+    this.keycloakService.login();
+  }
+
 
   ngOnInit() {
     this.CommunicationService.showNavbar$.subscribe(show => this.showNavbar = show);

@@ -46,4 +46,10 @@ export class UserService {
       JSON.stringify(refreshtoken),
     { headers: { 'Content-Type': 'application/json' } });
   }
+
+  getUseridByKeycloakId(keycloakId: string): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(
+      `${this.baseUrl}/GetUserIdFromKeycloak/${keycloakId}`
+    );
+  }
 }

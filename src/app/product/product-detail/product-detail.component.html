@@ -27,8 +27,7 @@
 
                 <div class="play-overlay" *ngIf="isShowingIcon">
                   <i class="bi"
-                    [ngClass]=" videoStates[getCurrentImageNumber()-1]?.isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
-
+                    [ngClass]=" videoStates[getCurrentImageNumber()-1].isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
                 </div>
 
 
@@ -36,7 +35,7 @@
                   <div class="video-controls-row">
                     <button class="play-pause-btn" (click)="toggleVideo(videoRef); $event.stopPropagation()">
                       <i class="bi"
-                        [ngClass]="videoStates[getCurrentImageNumber()-1]?.isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
+                        [ngClass]="videoStates[getCurrentImageNumber()-1].isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
                     </button>
                     <div class="progress-container" (click)="seekVideo($event, videoRef)"
                       (mousedown)="onScrubbingStart($event,videoRef)" (mousemove)="onScrubbing($event, videoRef)"
@@ -76,7 +75,7 @@
               <div *ngSwitchCase="'Video'" class="video-container">
                 <video [src]="getProductImageUrl(media.mediaUrl)" class="thumbnail-video"></video>
                 <div class="play-overlay-thumbnail" *ngIf="videoStates[i]?.showIcon">
-                  <i class="bi" [ngClass]=" videoStates[i]?.isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
+                  <i class="bi" [ngClass]=" videoStates[i].isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i>
                 </div>
               </div>
             </div>
