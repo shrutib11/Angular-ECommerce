@@ -45,12 +45,11 @@ export class KeycloakService {
 
     if (authenticated) {
       const token = this.keycloak.token;
-      // console.log('Token:', token);
       const tokenParsed = this.keycloak.tokenParsed;
-      // console.log('Token Parsed:', tokenParsed);
+      console.log('Token Parsed:', tokenParsed);
       const roles = this.keycloak.tokenParsed?.['roles'] || [];
       const email = this.keycloak.tokenParsed?.['email'];
-      const userId = this.keycloak.tokenParsed?.['userId']
+      const sub = this.keycloak.tokenParsed?.['sub'];
 
       if (roles.includes('Admin')) {
         this.commService.adminRole();
@@ -59,34 +58,47 @@ export class KeycloakService {
       }
 
       this.sessionService.setEmail(email);
-      this.sessionService.setUserId(userId)
       this.sessionService.setUserRole(
         roles?.includes('Admin') ? 'Admin' : 'User'
       );
+
       this.cookieService.setCookie("Token", this.keycloak.token!, 1);
 
-      this.cartService.getUserCart(userId).subscribe({
+      this.userService.getUseridByKeycloakId(sub!).subscribe({
         next: (response) => {
-          this.userCart = { ...response.result };
-          this.sessionService.setCartId(this.userCart.id!);
-          this.sessionService.markSessionReady();
-        },
-        error: (error: any) => {
-          if (error.status == 404) {
-            this.userCart.userId = this.sessionService.getUserId();
-            this.cartService.createCart(this.userCart).subscribe({
-              next: (response) => {
-                this.userCart = { ...response.result };
-                this.sessionService.setCartId(this.userCart.id!);
-                this.sessionService.markSessionReady();
-              },
-              error: (error: any) => {
-                this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
+          const userId = response.result;
+          this.sessionService.setUserId(userId);
+
+          this.cartService.getUserCart(userId).subscribe({
+            next: (response) => {
+              console.log("getusercart",response);
+              this.userCart = { ...response.result };
+              this.sessionService.setCartId(this.userCart.id!);
+              this.sessionService.markSessionReady();
+            },
+            error: (error: any) => {
+              if (error.status == 404) {
+                this.userCart.userId = this.sessionService.getUserId();
+                this.cartService.createCart(this.userCart).subscribe({
+                  next: (response) => {
+                    this.userCart = { ...response.result };
+                    this.sessionService.setCartId(this.userCart.id!);
+                    this.sessionService.markSessionReady();
+                  },
+                  error: (error: any) => {
+                    this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
+                  }
+                })
               }
-            })
-          }
+            }
+          });
+        },
+        error: (error) => {
+          console.log(error.error);
+          this.alertService.showError(`failed to create cart : ${error.error.errorMessage}`);
         }
       });
+
       this.sessionService.markSessionReady();
     }
 
@@ -124,6 +136,7 @@ export class KeycloakService {
           this.sessionService.clear();
           this.commService.isLoggedIn(false);
           this.cookieService.deleteCookie("Token");
+          this.alertService.showSuccess('Logout successful');
         },
         error: (error: any) => {
           this.alertService.showError(`Logout failed : ${error.error.errorMessage}`)

@@ -20,6 +20,7 @@
         class="nav-link text-dark fw-medium">Users</a>
       <a routerLink="/products" class="nav-link text-dark fw-medium" routerLinkActive="active">Products</a>
       <a (click)="login()" *ngIf="!loggedIn" class="nav-link text-dark fw-medium">Login</a>
+      <a (click)="Register()" *ngIf="!loggedIn" class="nav-link text-dark fw-medium">Register</a>
 
       <div class="dropdown" *ngIf="loggedIn">
         <a class="nav-link text-dark d-flex align-items-center gap-1 dropdown-toggle" href="#" role="button"
@@ -82,4 +83,5 @@
   </div>
 </nav>
 <app-user-add-edit *ngIf="showModal" [showModal]="showModal" [user]="user"
-  (closeModal)="showModal = false"></app-user-add-edit>
+  (closeModal)="showModal = false"
+  (upsertCompleted)="onUpsertCompleted($event)"></app-user-add-edit>

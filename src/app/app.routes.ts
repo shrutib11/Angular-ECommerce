@@ -1,15 +1,10 @@
 import { Routes } from '@angular/router';
 import { CategoryListComponent } from './category/category-list/category-list.component';
 import { HomeComponent } from './home/home/home.component';
-import { ProfileComponent } from './profile/profile.component';
-import { UserListComponent } from './user/user-list/user-list.component';
-import { LoginComponent  } from './user/login/login.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
-import { ShoppingCartComponent } from './cart/shopping-cart/shopping-cart.component';
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 import { UnauthorizedComponent } from './shared/pages/unauthorized/unauthorized.component';
-import { CustomerReviewsPageComponent } from './reviews/customer-reviews-page/customer-reviews-page.component';
 import { authRedirectGuard } from './guards/auth-redirect.guard';
 import { LoginRedirectComponent } from './shared/login-redirect/login-redirect.component';
 
@@ -39,7 +34,8 @@ export const routes: Routes = [
   },
   {
     path: 'cart',
-    component: ShoppingCartComponent
+    canActivate: [authRedirectGuard],
+    loadComponent: () => import('./cart/shopping-cart/shopping-cart.component').then(m => m.ShoppingCartComponent)
   },
   {
     path: 'account',
@@ -64,6 +60,7 @@ export const routes: Routes = [
   },
   {
     path: 'reviews/:id',
-    component: CustomerReviewsPageComponent
+    canActivate: [authRedirectGuard],
+    loadComponent: () => import('./reviews/customer-reviews-page/customer-reviews-page.component').then(m => m.CustomerReviewsPageComponent)
   },
 ];
