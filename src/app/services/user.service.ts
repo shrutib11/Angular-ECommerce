@@ -5,6 +5,7 @@ import { UserModel } from '../models/user.model';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
 import Hashids from 'hashids';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
   private baseUrl = environment.userBaseUrl;
   private readonly hashids: Hashids;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cookieService: CookieService) {
     this.hashids = new Hashids(environment.secretSalt, 8);
   }
   getAllUsers(): Observable<ApiResponse<UserModel[]>> {
@@ -39,12 +40,6 @@ export class UserService {
 
   resetPassword(userData: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.baseUrl}/reset-password`, userData);
-  }
-
-  logout(refreshtoken : string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`,
-      JSON.stringify(refreshtoken),
-    { headers: { 'Content-Type': 'application/json' } });
   }
 
   getUseridByKeycloakId(keycloakId: string): Observable<ApiResponse<any>> {

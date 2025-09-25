@@ -99,11 +99,9 @@ export class LoginComponent {
       })
     }
   }
-
   ngOnInit() {
     this.modalService.hideNavbar();
   }
-
   onLogin() {
     this.isSubmitted = true;
     const formData = new FormData();
@@ -118,7 +116,12 @@ export class LoginComponent {
       this.authService.login(formData).subscribe({
         next: (response) => {
           this.alertService.showSuccess('Login successful');
-          this.cookieService.setCookie("Token", response.result.token, 7);
+          const result = response.result;
+          const acessTokenexpiry = (result.tokens.expiresIn) / 86400;
+          const refreshTokenexpiry = (result.tokens.refreshExpiresIn) / 86400;
+
+          this.cookieService.setCookie("Token", result.tokens.accessToken, acessTokenexpiry);
+          this.cookieService.setCookie("RefreshToken", result.tokens.refreshToken, refreshTokenexpiry);
           this.sessionService.setUserId(response.result.user.id);
           this.sessionService.setEmail(response.result.user.email);
           this.sessionService.setUserRole(response.result.user.role);
@@ -130,6 +133,7 @@ export class LoginComponent {
           else {
             this.modalService.adminRole();
           }
+
           this.cartService.getUserCart(response.result.user.id).subscribe({
             next: (response) => {
               this.userCart = { ...response.result };

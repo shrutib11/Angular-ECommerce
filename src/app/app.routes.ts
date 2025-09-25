@@ -6,7 +6,7 @@ import { ProductDetailComponent } from './product/product-detail/product-detail.
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 import { UnauthorizedComponent } from './shared/pages/unauthorized/unauthorized.component';
 import { authRedirectGuard } from './guards/auth-redirect.guard';
-import { LoginRedirectComponent } from './shared/login-redirect/login-redirect.component';
+import { LoginComponent } from './user/login/login.component';
 
 export const routes: Routes = [
   {
@@ -24,7 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginRedirectComponent,
+    component: LoginComponent,
     data: { noPadding: true }
   },
   {
