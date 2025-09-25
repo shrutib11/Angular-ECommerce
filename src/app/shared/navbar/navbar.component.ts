@@ -7,13 +7,15 @@ import { ComponentCommunicationService } from '../../services/component-communic
 import { SessionService } from '../../services/session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from '../../services/cart.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { KeycloakService } from '../../services/keycloak.service';
+import { UserService } from '../../services/user.service';
+import { AlertService } from '../alert/alert.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule, UserAddEditComponent, CommonModule, FormsModule, NotificationsComponent],
+  imports: [RouterModule, UserAddEditComponent, CommonModule, FormsModule, NotificationsComponent, ReactiveFormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -45,15 +47,18 @@ export class NavbarComponent implements OnInit {
   };
   searchText: string = '';
 
+  private refreshInterval: any;
+
   constructor(private CommunicationService: ComponentCommunicationService,
     private sessionService: SessionService,
-    private cookieService: CookieService,
     private cartService: CartService,
     private router: Router,
-    private keycloakService: KeycloakService) {
-      this.CommunicationService.isLoggedIn$.subscribe(val => this.loggedIn = val);
-      this.CommunicationService.isAdmin$.subscribe(val => this.isAdmin = val);
-    }
+    private cookieService: CookieService,
+    private authService: AuthenticationService,
+    private userService: UserService, private alertService: AlertService) {
+    this.CommunicationService.isLoggedIn$.subscribe(val => this.loggedIn = val);
+    this.CommunicationService.isAdmin$.subscribe(val => this.isAdmin = val);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
@@ -97,25 +102,77 @@ export class NavbarComponent implements OnInit {
     this.showNotifications = !this.showNotifications
   }
 
-  Register() {
-    this.isRegister = true;
-    this.showModal = true;
-  }
-
   logout() {
-    this.keycloakService.logout();
-    this.cookieService.deleteAll();
-    this.sessionService.clear();
-    this.CommunicationService.isLoggedIn(false);
-    this.sessionService.markSessionReady(); 
-    this.router.navigate(['/']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.alertService.showSuccess("Logged out successfully");
+        this.authService.ClearSession(false);
+        this.router.navigate(['/']);
+      }
+      , error: (error) => {
+        this.alertService.showError(`Logout failed : ${error.error.errorMessage}`);
+      }
+    });
+
   }
 
   onUpsertCompleted(upsertCompleted: boolean) {
     this.showModal = false;
-    this.keycloakService.login();
+    this.router.navigate(['/login']);
   }
 
+  private startTokenRefreshInterval() {
+
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+
+    this.refreshInterval = setInterval(() => {
+      const accessToken = this.cookieService.get('Token');
+      const refreshToken = this.cookieService.get('RefreshToken');
+
+      if (!refreshToken) {
+        clearInterval(this.refreshInterval);
+        this.CommunicationService.isLoggedIn(false);
+        return;
+      }
+
+      if (!accessToken || this.isTokenExpiringSoon(accessToken, 120)) {
+        this.authService.refreshToken(refreshToken).subscribe({
+          next: (response) => {
+
+            const newAccessToken = response.result.accessToken;
+            const newRefreshToken = response.result.refreshToken;
+            const accessTokenExpiry = response.result.expiresIn / 86400;
+            const refreshTokenExpiry = response.result.refreshExpiresIn / 86400;
+
+            this.cookieService.set("Token", newAccessToken, accessTokenExpiry);
+            this.cookieService.set("RefreshToken", newRefreshToken, refreshTokenExpiry);
+            this.CommunicationService.isLoggedIn(true);
+          },
+          error: (err) => {
+            console.error('Token refresh failed', err);
+            this.logout();
+          }
+        });
+      } else {
+        console.log('Access token still valid → no refresh needed');
+      }
+    }, 60000);
+  }
+
+
+  private isTokenExpiringSoon(token: string, thresholdSeconds: number = 120): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000;
+      const now = Date.now();
+      const timeLeft = (exp - now) / 1000;
+      return exp - now < thresholdSeconds * 1000;
+    } catch (e) {
+      return true;
+    }
+  }
 
   ngOnInit() {
     this.CommunicationService.showNavbar$.subscribe(show => this.showNavbar = show);
@@ -132,38 +189,45 @@ export class NavbarComponent implements OnInit {
     });
 
     this.updateUnreadCount();
-  }
 
-  login() {
-    this.keycloakService.login();
+    const refreshToken = this.cookieService.get('RefreshToken');
+
+    if (refreshToken) {
+      this.CommunicationService.isLoggedIn(true);
+      this.startTokenRefreshInterval();
+    } else {
+      this.CommunicationService.isLoggedIn(false);
+    }
+
   }
 
   private initializeNavbar() {
-    this.CommunicationService.isAdmin$.subscribe(show => this.isAdmin = show);
-    this.CommunicationService.isLoggedIn$.subscribe(show => {
-      this.loggedIn = show;
-      if (this.loggedIn) {
-        this.cartService.getCartItems().subscribe();
-      }
-    });
-
-    if (this.cookieService.get('Token')) {
-      this.loggedIn = true;
-    }
-
-    if (this.sessionService.getUserRole().toLowerCase() === 'admin') {
-      this.isAdmin = true;
-    }
-
+  this.CommunicationService.isAdmin$.subscribe(show => this.isAdmin = show);
+  this.CommunicationService.isLoggedIn$.subscribe(show => {
+    this.loggedIn = show;
     if (this.loggedIn) {
       this.cartService.getCartItems().subscribe();
     }
+  });
+
+  if (this.cookieService.get('Token')) {
+    this.loggedIn = true;
   }
 
-  onEnter() {
-    const trimmed = this.searchText.trim();
-    if (trimmed) {
-      this.router.navigate(['/products'], { queryParams: { search: trimmed } });
-    }
+  if (this.sessionService.getUserRole().toLowerCase() === 'admin') {
+    this.isAdmin = true;
   }
+
+  if (this.loggedIn) {
+    this.cartService.getCartItems().subscribe();
+  }
+}
+
+onEnter() {
+  const trimmed = this.searchText.trim();
+  if (trimmed) {
+    this.router.navigate(['/products'], { queryParams: { search: trimmed } });
+  }
+}
+
 }
